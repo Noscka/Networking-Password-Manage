@@ -123,6 +123,7 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Name = "Form2";
 			this.Text = "Form2";
+			this.Load += new System.EventHandler(this.Form2_Load);
 			this.Control_Bar.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.MinimisePictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ExitPictureBox)).EndInit();

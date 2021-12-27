@@ -12,13 +12,14 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace DOSServer
 {
 	internal class Program
 	{
 		#region Const
-		private static readonly String UserDataStore = @"Users.json";
+		private static readonly String UserDataStore = $@"{Directory.GetCurrentDirectory()}/Users.json";
 		#endregion
 
 		#region Globalvariables
@@ -31,8 +32,7 @@ namespace DOSServer
 		static void Main(string[] args)
 		{
 			#region Read JSON
-			if (!File.Exists(UserDataStore)){File.Create(UserDataStore);}
-			User.UserArray = JsonConvert.DeserializeObject<List<User>>(File.ReadAllText(UserDataStore)) ?? new List<User>() {};
+			CreateAndReadUserFile();
 			#endregion
 
 			#region Client Management
@@ -64,6 +64,8 @@ namespace DOSServer
 		/// <param name="Client">Client Object</param>
 		public static void HandleNewTCPClient(ObjectTcpClient Client)
 		{
+			User CurrentUser = new User();
+
 			try
 			{
 				ObjectNetworkStream ClientNetworkStream = Client.GetStream();
@@ -71,7 +73,6 @@ namespace DOSServer
 			RestartLogging:
 				bool ContinueSignProc = true;
 				RequestPacket Received;
-				User CurrentUser = new User();
 
 				// loops till currect user is set
 				while (ContinueSignProc)
@@ -93,6 +94,7 @@ namespace DOSServer
 									if (PasswordHashing.ValidatePassword(Received.Password, userInList.password))
 									{
 										CurrentUser = userInList;
+										CurrentUser.tcpClient = Client;
 										response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignIn);
 										Console.WriteLine(ConsoleLog($"{CurrentUser.name} Has logged in"));
 										ContinueSignProc = false;
@@ -122,7 +124,7 @@ namespace DOSServer
 
 							if (!found)
 							{
-								CurrentUser = new User(Received.Username, PasswordHashing.CreateHash(Received.Password));
+								CurrentUser = new User(Client, Received.Username, PasswordHashing.CreateHash(Received.Password));
 								User.UserArray.Add(CurrentUser);
 								response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignUp);
 								Console.WriteLine(ConsoleLog($"New account Created: {CurrentUser.name}"));
@@ -163,6 +165,7 @@ namespace DOSServer
 			}
 			catch (System.IO.IOException)
 			{
+				CurrentUser.tcpClient = null;
 				Console.WriteLine(ConsoleLog("Connection Ended"));
 				User.TotalUsers--;
 				UpdateTitle();
@@ -185,6 +188,52 @@ namespace DOSServer
 		{
 			Console.Title = $"Server {ServerTCPListener.LocalEndpoint} || Users: {User.TotalUsers}";
 		}
+
+		#region Async
+		private static async void CreateAndReadUserFile()
+		{
+			await WhenFileCreated(UserDataStore);
+			User.UserArray = JsonConvert.DeserializeObject<List<User>>(File.ReadAllText(UserDataStore)) ?? new List<User>() { };
+		}
+
+		public static Task WhenFileCreated(string path)
+		{
+			if (File.Exists(path))
+				return Task.FromResult(true);
+
+			var tcs = new TaskCompletionSource<bool>();
+			FileSystemWatcher watcher = new FileSystemWatcher(Path.GetDirectoryName(path));
+
+			FileSystemEventHandler createdHandler = null;
+			RenamedEventHandler renamedHandler = null;
+			createdHandler = (s, e) =>
+			{
+				if (e.Name == Path.GetFileName(path))
+				{
+					tcs.TrySetResult(true);
+					watcher.Created -= createdHandler;
+					watcher.Dispose();
+				}
+			};
+
+			renamedHandler = (s, e) =>
+			{
+				if (e.Name == Path.GetFileName(path))
+				{
+					tcs.TrySetResult(true);
+					watcher.Renamed -= renamedHandler;
+					watcher.Dispose();
+				}
+			};
+
+			watcher.Created += createdHandler;
+			watcher.Renamed += renamedHandler;
+
+			watcher.EnableRaisingEvents = true;
+
+			return tcs.Task;
+		}
+		#endregion
 	}
 
 	static class PasswordHashing
@@ -267,6 +316,7 @@ namespace DOSServer
 		}
 	}
 
+	[Serializable]
 	class User
 	{
 
@@ -286,13 +336,15 @@ namespace DOSServer
 			{
 				if(user.tcpClient != null)
 				{
-					user.tcpClient.GetStream().Write(Encoding.Unicode.GetBytes(message), 0, Encoding.Unicode.GetBytes(message).Length);
+					user.tcpClient.GetStream().Write(new ResponsePacket(NetworkReponse.ResponseCodes.MessageSend, message));
 				}
 			}
 		}
 
 		public String name { get; set; }
 		public String password { get; set; }
+
+		[JsonIgnore] 
 		public ObjectTcpClient tcpClient { get; set; }
 
 		/// <summary>

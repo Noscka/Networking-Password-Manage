@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Networking.ObjectStream;
@@ -93,6 +94,12 @@ namespace GUIClient
 			FormParent = Parent;
 			InitializeComponent();
 		}
+		private void Form2_Load(Object sender, EventArgs e)
+		{
+			Thread TPCConnectionThread = new Thread(() => ListenThread(Form1.TCPNetworkStream, this));
+			TPCConnectionThread.Start();
+		}
+
 		private void Output_GotFocus(Object sender, EventArgs e)
 		{
 			HideCaret(((TextBox)sender).Handle);
@@ -131,20 +138,31 @@ namespace GUIClient
 		{
 			while (true)
 			{
-				Byte[] ByteBuffer = new Byte[1024];
-
-				ResponsePacket Received = (ResponsePacket)Form1._bFormatter.Deserialize(ListenStream);
-
-				switch (Received.Response)
+				try
 				{
-					case NetworkReponse.ResponseCodes.MessageSend:
-						CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.Text += $"({DateTime.Now}) || {Received.ResponseString}\n"; });
-						break;
-					//Else
-					default:
-						break;
+					Byte[] ByteBuffer = new Byte[1024];
+
+					ResponsePacket Received = (ResponsePacket)Form1._bFormatter.Deserialize(ListenStream);
+
+					switch (Received.Response)
+					{
+						case NetworkReponse.ResponseCodes.MessageSend:
+							CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"({DateTime.Now}) || {Received.ResponseString}" + Environment.NewLine); });
+							break;
+						//Else
+						default:
+							break;
+					}
 				}
+				catch (System.IO.IOException)
+				{
+					CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"({DateTime.Now}) || Connection Ended" + Environment.NewLine); });
+					ListenStream.Close();
+				}
+
 			}
 		}
+
+		
 	}
 }

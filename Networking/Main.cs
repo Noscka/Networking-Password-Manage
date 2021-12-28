@@ -1,14 +1,10 @@
-﻿using System;
-using System.Net.Sockets;
+﻿using Networking.ObjectStream;
+using System;
 using System.IO;
-using Networking.ObjectStream;
-using Networking.Packets;
-using Networking.TCP;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Net.Security;
-using System.Security.Authentication;
 
 namespace Networking.Packets
 {
@@ -120,7 +116,7 @@ namespace Networking.ObjectStream
 		public ObjectNetworkStream(Socket socket, bool ownsSocket) : base(socket, ownsSocket)
 		{
 		}
-		public ObjectNetworkStream(Socket socket, FileAccess access) : base(socket, access) 
+		public ObjectNetworkStream(Socket socket, FileAccess access) : base(socket, access)
 		{
 		}
 		public ObjectNetworkStream(Socket socket, FileAccess access, bool ownsSocket) : base(socket, access, ownsSocket)

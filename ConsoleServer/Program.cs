@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
-using Networking.ObjectStream;
-using Networking.TCP;
+﻿using Networking.ObjectStream;
 using Networking.Packets;
+using Networking.TCP;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
-using Newtonsoft.Json;
-using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DOSServer
@@ -332,9 +329,9 @@ namespace DOSServer
 
 		public static void SendAll(String message)
 		{
-			foreach(User user in UserArray)
+			foreach (User user in UserArray)
 			{
-				if(user.tcpClient != null)
+				if (user.tcpClient != null)
 				{
 					user.tcpClient.GetStream().Write(new ResponsePacket(NetworkReponse.ResponseCodes.MessageSend, message));
 				}
@@ -344,7 +341,7 @@ namespace DOSServer
 		public String name { get; set; }
 		public String password { get; set; }
 
-		[JsonIgnore] 
+		[JsonIgnore]
 		public ObjectTcpClient tcpClient { get; set; }
 
 		/// <summary>

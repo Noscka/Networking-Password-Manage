@@ -1,17 +1,14 @@
-﻿using System;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Windows.Forms;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using Networking.ObjectStream;
+﻿using Networking.ObjectStream;
 using Networking.Packets;
 using Networking.TCP;
+using System;
+using System.Drawing;
+using System.Net;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace GUIClient
 {
@@ -94,6 +91,11 @@ namespace GUIClient
 		{
 			Thread TPCConnectionThread = new Thread(() => ConnectToServer(this));
 			TPCConnectionThread.Start();
+
+			Form2 ChatForm = new Form2(this);
+			ChatForm.Show();
+			this.Hide();
+
 		}
 
 		#region SignIn/Up logic
@@ -190,19 +192,19 @@ namespace GUIClient
 				{
 					case NetworkReponse.ResponseCodes.successful:
 						NextForm = true;
-						CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = "Logged In";});
+						CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = "Logged In"; });
 						break;
 					case NetworkReponse.ResponseCodes.WrongPass:
-						CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate {CurrentForm.ErrorInfoLogin.Text = "Wrong Password";});
+						CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = "Wrong Password"; });
 						break;
 					case NetworkReponse.ResponseCodes.NotFound:
-						CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate {CurrentForm.ErrorInfoLogin.Text = "User Not Found";});
+						CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = "User Not Found"; });
 						break;
 				}
 			}
 			else
 			{
-				CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = "Creating Account\nMight take a sec";});
+				CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = "Creating Account\nMight take a sec"; });
 
 				TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.SignUp, Username, Password));
 				Received = (ResponsePacket)_bFormatter.Deserialize(TCPNetworkStream);

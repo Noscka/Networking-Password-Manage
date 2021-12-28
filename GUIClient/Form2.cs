@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Networking.ObjectStream;
+﻿using Networking.ObjectStream;
 using Networking.Packets;
-using Networking.TCP;
+using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
 
 
 namespace GUIClient
@@ -98,6 +91,12 @@ namespace GUIClient
 		{
 			Thread TPCConnectionThread = new Thread(() => ListenThread(Form1.TCPNetworkStream, this));
 			TPCConnectionThread.Start();
+
+			Form3 SideForm = new Form3(this);
+			SideForm.FormParent = this;
+			SideForm.Left = this.Left + this.Width + 10;
+			SideForm.Top = this.Top + (this.Height - SideForm.Height) / 2;
+			SideForm.Show();
 		}
 
 		private void Output_GotFocus(Object sender, EventArgs e)
@@ -107,7 +106,7 @@ namespace GUIClient
 
 		private void Input_Enter(Object sender, EventArgs e)
 		{
-			if(Input.ForeColor == Color.Gray)
+			if (Input.ForeColor == Color.Gray)
 			{
 				Input.Text = "";
 				Input.ForeColor = Color.FromArgb(0, 192, 0);
@@ -116,7 +115,7 @@ namespace GUIClient
 
 		private void Input_Leave(Object sender, EventArgs e)
 		{
-			if(Input.Text.Length == 0)
+			if (Input.Text.Length == 0)
 			{
 				Input.Text = "Send to everyone...";
 				Input.ForeColor = Color.Gray;
@@ -154,15 +153,26 @@ namespace GUIClient
 							break;
 					}
 				}
-				catch (System.IO.IOException)
+				catch (Exception ex)
 				{
-					CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"({DateTime.Now}) || Connection Ended" + Environment.NewLine); });
-					ListenStream.Close();
+					if (ex is System.IO.IOException)
+					{
+						CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"({DateTime.Now}) || Connection Ended" + Environment.NewLine); });
+						ListenStream.Close();
+						return;
+					}
+					else if (ex is System.ArgumentNullException)
+					{
+						CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"({DateTime.Now}) || Testing Env" + Environment.NewLine); });
+						return;
+					}
+					else
+					{
+						throw ex;
+					}
 				}
 
 			}
 		}
-
-		
 	}
 }

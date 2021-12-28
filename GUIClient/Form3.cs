@@ -8,7 +8,7 @@ namespace GUIClient
 {
 	public partial class Form3 : Form
 	{
-		#region TopBar
+		#region TopBar EDITED
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
 
@@ -34,6 +34,7 @@ namespace GUIClient
 			{
 				ReleaseCapture();
 				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+				DockingValidation();
 			}
 		}
 
@@ -113,15 +114,44 @@ namespace GUIClient
 			}
 		}
 
+		private void DockingValidation()
+		{
+			FormParent.WriteToConsole($"Validating");
+			Docked = false;
+			if (this.Top >= FormParent.Top && this.Top <= FormParent.Top + FormParent.Height)
+			{
+				//if (this.Left <= FormParent.Left + FormParent.Width - 10 && this.Left >= FormParent.Left + FormParent.Width + 10)
+				if(true)
+				{
+					Docked = true;
+					FormParent.WriteToConsole($"Validating");
+				}
+			}
+		}
+
 		private void DockingValidation(Form3 CurrentForm)
 		{
+			return;
+			uint number = 0;
+
+			FormParent.WriteToConsole($"{CurrentForm.Top} | {FormParent.Top}");
+
 			while (true)
 			{
+				Docked = false;
 				MRSE.WaitOne();
-				if (CurrentForm.Left >= FormParent.Left)
-				{
 
+				if (CurrentForm.Top >= FormParent.Top && CurrentForm.Top <= FormParent.Top + FormParent.Height)
+				{
+					if (CurrentForm.Left <= FormParent.Left + FormParent.Width - 10 && CurrentForm.Left >= FormParent.Left + FormParent.Width + 10)
+					{
+						Docked = true;
+						FormParent.WriteToConsole($"Stuff {number}");
+					}
 				}
+
+				Thread.Sleep(10);
+				number++;
 			}
 		}
 		#endregion

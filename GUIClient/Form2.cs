@@ -17,7 +17,7 @@ namespace GUIClient
 		[DllImport("user32.dll")]
 		static extern bool ShowCaret(IntPtr hWnd);
 
-		#region TopBar
+		#region TopBar EDITED
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
 
@@ -82,6 +82,11 @@ namespace GUIClient
 		public Form1 FormParent = null;
 		#endregion
 
+		public void WriteToConsole(String Message)
+		{
+			this.Output.AppendText(Message + Environment.NewLine);
+		}
+
 		public Form2(Form1 Parent)
 		{
 			FormParent = Parent;
@@ -133,6 +138,7 @@ namespace GUIClient
 			}
 		}
 
+		#region Threading
 		private static void ListenThread(ObjectNetworkStream ListenStream, Form2 CurrentForm)
 		{
 			while (true)
@@ -173,6 +179,7 @@ namespace GUIClient
 				}
 
 			}
-		}
+		} 
+		#endregion
 	}
 }

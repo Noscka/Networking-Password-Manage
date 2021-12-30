@@ -33,6 +33,7 @@
 			this.ExitPictureBox = new System.Windows.Forms.PictureBox();
 			this.Output = new System.Windows.Forms.TextBox();
 			this.Input = new System.Windows.Forms.TextBox();
+			this.DockBar = new System.Windows.Forms.Panel();
 			this.Control_Bar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinimisePictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ExitPictureBox)).BeginInit();
@@ -111,12 +112,23 @@
 			this.Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Input_KeyDown);
 			this.Input.Leave += new System.EventHandler(this.Input_Leave);
 			// 
+			// DockBar
+			// 
+			this.DockBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+			this.DockBar.Location = new System.Drawing.Point(795, 250);
+			this.DockBar.Margin = new System.Windows.Forms.Padding(0);
+			this.DockBar.Name = "DockBar";
+			this.DockBar.Size = new System.Drawing.Size(4, 200);
+			this.DockBar.TabIndex = 5;
+			this.DockBar.Visible = false;
+			// 
 			// Form2
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(7)))), ((int)(((byte)(7)))), ((int)(((byte)(7)))));
 			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.Controls.Add(this.DockBar);
 			this.Controls.Add(this.Input);
 			this.Controls.Add(this.Output);
 			this.Controls.Add(this.Control_Bar);
@@ -140,5 +152,6 @@
 		private System.Windows.Forms.PictureBox ExitPictureBox;
 		private System.Windows.Forms.TextBox Output;
 		private System.Windows.Forms.TextBox Input;
+		public System.Windows.Forms.Panel DockBar;
 	}
 }

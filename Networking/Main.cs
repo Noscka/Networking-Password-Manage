@@ -32,15 +32,24 @@ namespace Networking.Packets
 	[Serializable]
 	public class Packet
 	{
-		public Packet() { }
-
 		public virtual String PacketType { get; } = "Packet";
 
+		public Packet() { }
 	}
 
 	[Serializable]
 	public class RequestPacket : Packet
 	{
+		public override String PacketType { get; } = "SignPacket";
+
+		public NetworkOperationTypes OpType { get; set; }
+
+		public String Username { get; set; }
+
+		public String Password { set; get; }
+
+		public String Message { set; get; }
+
 		public RequestPacket() { }
 		public RequestPacket(NetworkOperationTypes opType)
 		{
@@ -57,27 +66,32 @@ namespace Networking.Packets
 			Username = username;
 			Password = password;
 		}
-
-		public override String PacketType { get; } = "SignPacket";
-
-		public NetworkOperationTypes OpType { get; set; }
-
-		public String Username { get; set; }
-
-		public String Password { set; get; }
-
-		public String Message { set; get; }
 	}
 
 	[Serializable]
 	public class ResponsePacket : Packet
 	{
+		public override String PacketType { get; } = "ResponsePacket";
+
+		public NetworkReponse.ResponseCodes Response { get; set; }
+		public NetworkOperationTypes ReponseOperation { get; set; }
+
+		public String ResponseString { get; set; }
+
+		public NetSafeUser currentUser { get; set; }
+
 		public ResponsePacket() { }
 
 		public ResponsePacket(NetworkReponse.ResponseCodes response, NetworkOperationTypes ResponseOp)
 		{
 			Response = response;
 			ReponseOperation = ResponseOp;
+		}
+		public ResponsePacket(NetworkReponse.ResponseCodes response, NetworkOperationTypes ResponseOp, NetSafeUser CurrentUser)
+		{
+			Response = response;
+			ReponseOperation = ResponseOp;
+			currentUser = CurrentUser;
 		}
 
 		public ResponsePacket(NetworkReponse.ResponseCodes response, String message)
@@ -92,15 +106,19 @@ namespace Networking.Packets
 			ReponseOperation = ResponseOp;
 			ResponseString = SentText;
 		}
+	}
 
+	[Serializable]
+	public class NetSafeUser
+	{
+		public String Username { get; set; }
 
+		public NetSafeUser() { }
 
-		public override String PacketType { get; } = "ResponsePacket";
-
-		public NetworkReponse.ResponseCodes Response { get; set; }
-		public NetworkOperationTypes ReponseOperation { get; set; }
-
-		public String ResponseString { get; set; }
+		public NetSafeUser(String username)
+		{
+			Username = username;
+		}
 	}
 }
 

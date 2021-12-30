@@ -9,9 +9,6 @@ namespace GUIClient
 	public partial class Form3 : Form
 	{
 		#region TopBar EDITED
-		public const int WM_NCLBUTTONDOWN = 0xA1;
-		public const int HT_CAPTION = 0x2;
-
 		[DllImportAttribute("user32.dll")]
 		public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 		[DllImportAttribute("user32.dll")]
@@ -28,13 +25,25 @@ namespace GUIClient
 			}
 		}
 
-		private void Control_Bar_MouseMove(object sender, MouseEventArgs e)
+		private void Control_Bar_MouseDown(Object sender, MouseEventArgs e)
 		{
+			const int WM_NCLBUTTONDOWN = 0xA1;
+			const int HT_CAPTION = 0x2;
+
 			if (e.Button == MouseButtons.Left)
 			{
+				Thread DockinBarThread = new Thread(() => DockingBar(this));
+				DockinBarThread.Name = "Docking Bar Thread";
+				DockinBarThread.Start();
+
+				MRSE.Reset();
+
 				ReleaseCapture();
 				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-				DockingValidation();
+
+				Docked = DockingValidation();
+				MRSE.Set();
+				DoneSettingBar = true;
 			}
 		}
 
@@ -72,7 +81,8 @@ namespace GUIClient
 
 		#region Global Variables
 		public Form2 FormParent = null;
-		private bool Docked = false;
+		private bool Docked = false, DoneSettingBar = true;
+		private int DockedHeight;
 		private ManualResetEvent MRSE = new ManualResetEvent(false);
 		#endregion
 
@@ -84,21 +94,38 @@ namespace GUIClient
 
 		private void Form3_Load(Object sender, EventArgs e)
 		{
+			UsernameLabel.Text = $"Username: {Form1.CurrentUser.Username}";
+
 			Thread DockingThread = new Thread(() => DockedThread(this));
 			DockingThread.Name = "Docking Thread";
 			DockingThread.Start();
-
-			Thread DockingValidationThread = new Thread(() => DockingValidation(this));
-			DockingValidationThread.Name = "Docking Validation Thread";
-			DockingValidationThread.Start();
 		}
 
-		private void button1_Click(Object sender, EventArgs e)
+		#region Threading And Validating
+		private void DockingBar(Form3 CurrentForm)
 		{
-			Docked = !Docked;
+			DoneSettingBar = false;
+			while (true)
+			{
+				if (DoneSettingBar)
+				{
+					FormParent.Invoke((MethodInvoker)delegate
+					{
+						FormParent.DockBar.Visible = false;
+					});
+
+					return;
+				}
+
+				bool show = this.Left >= FormParent.Left + FormParent.Width - 30 && this.Left <= FormParent.Left + FormParent.Width + 30;
+
+				CurrentForm.Invoke((MethodInvoker)delegate
+				{
+					FormParent.UpdateDockingBar(CurrentForm.Top - FormParent.Top, show);
+				});
+			}
 		}
 
-		#region Threading
 		private void DockedThread(Form3 CurrentForm)
 		{
 			while (true)
@@ -108,52 +135,26 @@ namespace GUIClient
 					CurrentForm.Invoke((MethodInvoker)delegate
 					{
 						CurrentForm.Left = FormParent.Left + FormParent.Width + 10;
-						CurrentForm.Top = FormParent.Top + (FormParent.Height - CurrentForm.Height) / 2;
+						CurrentForm.Top = FormParent.Top + DockedHeight;
 					});
+
+					MRSE.WaitOne();
 				}
-			}
-		}
-
-		private void DockingValidation()
-		{
-			FormParent.WriteToConsole($"Validating");
-			Docked = false;
-			if (this.Top >= FormParent.Top && this.Top <= FormParent.Top + FormParent.Height)
-			{
-				//if (this.Left <= FormParent.Left + FormParent.Width - 10 && this.Left >= FormParent.Left + FormParent.Width + 10)
-				if(true)
-				{
-					Docked = true;
-					FormParent.WriteToConsole($"Validating");
-				}
-			}
-		}
-
-		private void DockingValidation(Form3 CurrentForm)
-		{
-			return;
-			uint number = 0;
-
-			FormParent.WriteToConsole($"{CurrentForm.Top} | {FormParent.Top}");
-
-			while (true)
-			{
-				Docked = false;
-				MRSE.WaitOne();
-
-				if (CurrentForm.Top >= FormParent.Top && CurrentForm.Top <= FormParent.Top + FormParent.Height)
-				{
-					if (CurrentForm.Left <= FormParent.Left + FormParent.Width - 10 && CurrentForm.Left >= FormParent.Left + FormParent.Width + 10)
-					{
-						Docked = true;
-						FormParent.WriteToConsole($"Stuff {number}");
-					}
-				}
-
-				Thread.Sleep(10);
-				number++;
 			}
 		}
 		#endregion
+
+		private bool DockingValidation()
+		{
+			if (this.Top >= FormParent.Top && this.Top <= FormParent.Top + FormParent.Height)
+			{
+				if(this.Left >= FormParent.Left + FormParent.Width - 30 && this.Left <= FormParent.Left + FormParent.Width + 30)
+				{
+					DockedHeight = this.Top - FormParent.Top;
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }

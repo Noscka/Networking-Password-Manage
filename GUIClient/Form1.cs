@@ -79,6 +79,7 @@ namespace GUIClient
 		public static bool SignIn = false, connected = false, NextForm = false;
 		public static ObjectTcpClient TCPClient { get; set; } = new ObjectTcpClient();
 		public static ObjectNetworkStream TCPNetworkStream { get; set; }
+		public static NetSafeUser CurrentUser { get; set; }
 		public static BinaryFormatter _bFormatter = new BinaryFormatter();
 		#endregion
 
@@ -91,11 +92,6 @@ namespace GUIClient
 		{
 			Thread TPCConnectionThread = new Thread(() => ConnectToServer(this));
 			TPCConnectionThread.Start();
-
-			Form2 ChatForm = new Form2(this);
-			ChatForm.Show();
-			this.Hide();
-
 		}
 
 		#region SignIn/Up logic
@@ -192,6 +188,7 @@ namespace GUIClient
 				{
 					case NetworkReponse.ResponseCodes.successful:
 						NextForm = true;
+						CurrentUser = Received.currentUser;
 						CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = "Logged In"; });
 						break;
 					case NetworkReponse.ResponseCodes.WrongPass:
@@ -212,6 +209,7 @@ namespace GUIClient
 				{
 					case NetworkReponse.ResponseCodes.successful:
 						NextForm = true;
+						CurrentUser = Received.currentUser;
 						CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = "Account Created"; });
 						break;
 					case NetworkReponse.ResponseCodes.UserExists:

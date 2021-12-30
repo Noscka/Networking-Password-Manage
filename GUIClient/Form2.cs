@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
-
 namespace GUIClient
 {
 	public partial class Form2 : Form
@@ -87,6 +86,26 @@ namespace GUIClient
 			this.Output.AppendText(Message + Environment.NewLine);
 		}
 
+		public void UpdateDockingBar(int Height, bool LeftRightClose)
+		{
+			if (Height < 450 && Height > 30)
+			{
+				if (LeftRightClose)
+				{
+					DockBar.Visible = true;
+					DockBar.Top = Height;
+				}
+				else
+				{
+					DockBar.Visible = false;
+				}
+			}
+			else
+			{
+				DockBar.Visible = false;
+			}
+		}
+
 		public Form2(Form1 Parent)
 		{
 			FormParent = Parent;
@@ -133,6 +152,8 @@ namespace GUIClient
 			{
 				Form1.TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.Message, Input.Text));
 
+				Input.Text = "";
+
 				e.Handled = true;
 				e.SuppressKeyPress = true;
 			}
@@ -152,7 +173,7 @@ namespace GUIClient
 					switch (Received.Response)
 					{
 						case NetworkReponse.ResponseCodes.MessageSend:
-							CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"({DateTime.Now}) || {Received.ResponseString}" + Environment.NewLine); });
+							CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"<{DateTime.Now.ToString("HH:mm")}> {Received.ResponseString}" + Environment.NewLine); });
 							break;
 						//Else
 						default:
@@ -167,11 +188,13 @@ namespace GUIClient
 						ListenStream.Close();
 						return;
 					}
+#if DEBUG
 					else if (ex is System.ArgumentNullException)
 					{
 						CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"({DateTime.Now}) || Testing Env" + Environment.NewLine); });
 						return;
 					}
+#endif
 					else
 					{
 						throw ex;

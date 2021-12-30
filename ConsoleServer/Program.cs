@@ -92,7 +92,7 @@ namespace DOSServer
 									{
 										CurrentUser = userInList;
 										CurrentUser.tcpClient = Client;
-										response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignIn);
+										response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignIn, new NetSafeUser(CurrentUser.name));
 										Console.WriteLine(ConsoleLog($"{CurrentUser.name} Has logged in"));
 										ContinueSignProc = false;
 										break;
@@ -123,7 +123,7 @@ namespace DOSServer
 							{
 								CurrentUser = new User(Client, Received.Username, PasswordHashing.CreateHash(Received.Password));
 								User.UserArray.Add(CurrentUser);
-								response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignUp);
+								response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignUp, new NetSafeUser(CurrentUser.name));
 								Console.WriteLine(ConsoleLog($"New account Created: {CurrentUser.name}"));
 								ContinueSignProc = false;
 
@@ -152,9 +152,9 @@ namespace DOSServer
 							goto RestartLogging;
 						case NetworkOperationTypes.Message:
 
-							User.SendAll(Received.Message);
+							User.SendAll($"\"{CurrentUser.name}\": {Received.Message}");
 
-							Console.WriteLine(Received.Message);
+							Console.WriteLine(ConsoleLog($"\"{CurrentUser.name}\": {Received.Message}"));
 							break;
 
 					}
@@ -166,6 +166,7 @@ namespace DOSServer
 				Console.WriteLine(ConsoleLog("Connection Ended"));
 				User.TotalUsers--;
 				UpdateTitle();
+				User.SendAll($"\"{CurrentUser.name}\" Left");
 				return;
 			}
 		}

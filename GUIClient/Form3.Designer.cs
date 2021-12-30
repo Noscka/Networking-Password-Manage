@@ -31,7 +31,7 @@
 			this.Control_Bar = new System.Windows.Forms.Panel();
 			this.MinimisePictureBox = new System.Windows.Forms.PictureBox();
 			this.ExitPictureBox = new System.Windows.Forms.PictureBox();
-			this.button1 = new System.Windows.Forms.Button();
+			this.UsernameLabel = new System.Windows.Forms.Label();
 			this.Control_Bar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinimisePictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ExitPictureBox)).BeginInit();
@@ -46,15 +46,15 @@
 			this.Control_Bar.Dock = System.Windows.Forms.DockStyle.Top;
 			this.Control_Bar.Location = new System.Drawing.Point(0, 0);
 			this.Control_Bar.Name = "Control_Bar";
-			this.Control_Bar.Size = new System.Drawing.Size(367, 30);
+			this.Control_Bar.Size = new System.Drawing.Size(350, 30);
 			this.Control_Bar.TabIndex = 4;
-			this.Control_Bar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Control_Bar_MouseMove);
+			this.Control_Bar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Control_Bar_MouseDown);
 			// 
 			// MinimisePictureBox
 			// 
 			this.MinimisePictureBox.Dock = System.Windows.Forms.DockStyle.Right;
 			this.MinimisePictureBox.Image = global::GUIClient.Properties.Resources._;
-			this.MinimisePictureBox.Location = new System.Drawing.Point(305, 0);
+			this.MinimisePictureBox.Location = new System.Drawing.Point(288, 0);
 			this.MinimisePictureBox.Name = "MinimisePictureBox";
 			this.MinimisePictureBox.Size = new System.Drawing.Size(30, 28);
 			this.MinimisePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -68,7 +68,7 @@
 			// 
 			this.ExitPictureBox.Dock = System.Windows.Forms.DockStyle.Right;
 			this.ExitPictureBox.Image = global::GUIClient.Properties.Resources.x;
-			this.ExitPictureBox.Location = new System.Drawing.Point(335, 0);
+			this.ExitPictureBox.Location = new System.Drawing.Point(318, 0);
 			this.ExitPictureBox.Name = "ExitPictureBox";
 			this.ExitPictureBox.Size = new System.Drawing.Size(30, 28);
 			this.ExitPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -78,23 +78,24 @@
 			this.ExitPictureBox.MouseLeave += new System.EventHandler(this.ExitBox_MouseLeave);
 			this.ExitPictureBox.MouseHover += new System.EventHandler(this.ExitBox_MouseHover);
 			// 
-			// button1
+			// UsernameLabel
 			// 
-			this.button1.Location = new System.Drawing.Point(146, 153);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(75, 23);
-			this.button1.TabIndex = 5;
-			this.button1.Text = "Dock";
-			this.button1.UseVisualStyleBackColor = true;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
+			this.UsernameLabel.AutoSize = true;
+			this.UsernameLabel.Font = new System.Drawing.Font("Segoe UI", 14F);
+			this.UsernameLabel.ForeColor = System.Drawing.Color.Lime;
+			this.UsernameLabel.Location = new System.Drawing.Point(10, 40);
+			this.UsernameLabel.Name = "UsernameLabel";
+			this.UsernameLabel.Size = new System.Drawing.Size(63, 25);
+			this.UsernameLabel.TabIndex = 5;
+			this.UsernameLabel.Text = "label1";
 			// 
 			// Form3
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(7)))), ((int)(((byte)(7)))), ((int)(((byte)(7)))));
-			this.ClientSize = new System.Drawing.Size(367, 266);
-			this.Controls.Add(this.button1);
+			this.ClientSize = new System.Drawing.Size(350, 200);
+			this.Controls.Add(this.UsernameLabel);
 			this.Controls.Add(this.Control_Bar);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Name = "Form3";
@@ -105,6 +106,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.MinimisePictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ExitPictureBox)).EndInit();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -113,6 +115,6 @@
 		private System.Windows.Forms.Panel Control_Bar;
 		private System.Windows.Forms.PictureBox MinimisePictureBox;
 		private System.Windows.Forms.PictureBox ExitPictureBox;
-		private System.Windows.Forms.Button button1;
+		private System.Windows.Forms.Label UsernameLabel;
 	}
 }

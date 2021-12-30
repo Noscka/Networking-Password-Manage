@@ -1,6 +1,6 @@
 ﻿namespace GUIClient
 {
-	partial class Form2
+	partial class ChatForm
 	{
 		/// <summary>
 		/// Required designer variable.

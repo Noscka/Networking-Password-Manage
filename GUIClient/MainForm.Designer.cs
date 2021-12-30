@@ -1,6 +1,6 @@
 ﻿namespace GUIClient
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -126,7 +126,6 @@
 			this.SignUpButton.Text = "Sign Up";
 			this.SignUpButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.SignUpButton.Click += new System.EventHandler(this.SignUpButton_Click);
-			this.SignUpButton.DoubleClick += new System.EventHandler(this.SignUpButton_DoubleClick);
 			// 
 			// SignInButton
 			// 

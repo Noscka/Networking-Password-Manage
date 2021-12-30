@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace GUIClient
 {
-	public partial class Form3 : Form
+	public partial class DockingForm : Form
 	{
 		#region TopBar EDITED
 		[DllImportAttribute("user32.dll")]
@@ -80,13 +80,13 @@ namespace GUIClient
 		#endregion
 
 		#region Global Variables
-		public Form2 FormParent = null;
+		public ChatForm FormParent = null;
 		private bool Docked = false, DoneSettingBar = true;
 		private int DockedHeight;
 		private ManualResetEvent MRSE = new ManualResetEvent(false);
 		#endregion
 
-		public Form3(Form2 Parent)
+		public DockingForm(ChatForm Parent)
 		{
 			InitializeComponent();
 			FormParent = Parent;
@@ -94,7 +94,7 @@ namespace GUIClient
 
 		private void Form3_Load(Object sender, EventArgs e)
 		{
-			UsernameLabel.Text = $"Username: {Form1.CurrentUser.Username}";
+			UsernameLabel.Text = $"Username: {MainForm.CurrentUser.Username}";
 
 			Thread DockingThread = new Thread(() => DockedThread(this));
 			DockingThread.Name = "Docking Thread";
@@ -102,7 +102,7 @@ namespace GUIClient
 		}
 
 		#region Threading And Validating
-		private void DockingBar(Form3 CurrentForm)
+		private void DockingBar(DockingForm CurrentForm)
 		{
 			DoneSettingBar = false;
 			while (true)
@@ -126,7 +126,7 @@ namespace GUIClient
 			}
 		}
 
-		private void DockedThread(Form3 CurrentForm)
+		private void DockedThread(DockingForm CurrentForm)
 		{
 			while (true)
 			{

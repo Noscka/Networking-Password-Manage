@@ -17,6 +17,9 @@ namespace DOSServer
 	internal class Program
 	{
 		#region Const
+		/// <summary>
+		/// Path to user store
+		/// </summary>
 		private static readonly String UserDataStore = $@"{Directory.GetCurrentDirectory()}/Users.json";
 		#endregion
 
@@ -192,16 +195,22 @@ namespace DOSServer
 			return $"({DateTime.Now}) || {inputMessage}";
 		}
 
+		/// <summary>
+		/// Global Function to update the title with user count and ip
+		/// </summary>
 		public static void UpdateTitle()
 		{
 			Console.Title = $"Server {ServerTCPListener.LocalEndpoint} || Users: {User.TotalUsers}";
 		}
 
 		#region Async
+		/// <summary>
+		/// create user.json and then use it as the userarray
+		/// </summary>
 		private static async void CreateAndReadUserFile()
 		{
 			await WhenFileCreated(UserDataStore);
-			User.UserArray = JsonConvert.DeserializeObject<List<User>>(File.ReadAllText(UserDataStore)) ?? new List<User>() { };
+			User.UserArray = JsonConvert.DeserializeObject<List<User>>(File.ReadAllText(UserDataStore)) ?? new List<User>() { }; // if the deserialized file isn't null use it, if not then make a new list
 		}
 
 		public static Task WhenFileCreated(string path)
@@ -244,6 +253,9 @@ namespace DOSServer
 		#endregion
 	}
 
+	/// <summary>
+	/// Password Hashing class
+	/// </summary>
 	static class PasswordHashing
 	{
 		public const int SALT_BYTE_SIZE = 40;
@@ -324,6 +336,9 @@ namespace DOSServer
 		}
 	}
 
+	/// <summary>
+	/// Local User object, CANNOT BE GLOBAL SO CLIENT DOESN'T GET PASSWORD
+	/// </summary>
 	[Serializable]
 	class User
 	{
@@ -338,11 +353,15 @@ namespace DOSServer
 		/// </summary>
 		public static List<User> UserArray = new List<User>() { };
 
+		/// <summary>
+		/// send to all function
+		/// </summary>
+		/// <param name="message">message to send</param>
 		public static void SendAll(String message)
 		{
-			foreach (User user in UserArray)
+			foreach (User user in UserArray) // go through all users
 			{
-				if (user.tcpClient != null)
+				if (user.tcpClient != null) // only send if the tcpClient object instance isn't null
 				{
 					user.tcpClient.GetStream().Write(new ResponsePacket(NetworkReponse.ResponseCodes.MessageSend, message));
 				}

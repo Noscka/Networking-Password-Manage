@@ -1,6 +1,6 @@
 ﻿namespace GUIClient
 {
-	partial class Form3
+	partial class DockingForm
 	{
 		/// <summary>
 		/// Required designer variable.

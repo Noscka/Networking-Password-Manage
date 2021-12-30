@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace GUIClient
 {
-	public partial class Form1 : Form
+	public partial class MainForm : Form
 	{
 		#region TopBar
 		public const int WM_NCLBUTTONDOWN = 0xA1;
@@ -76,20 +76,51 @@ namespace GUIClient
 		#endregion
 
 		#region Global Variables
-		public static bool SignIn = false, connected = false, NextForm = false;
+
+		/// <summary>
+		/// If user wants to SignIn (true) or SignUp (False)
+		/// </summary>
+		public static bool SignIn = false;
+
+		/// <summary>
+		/// if is connected to server
+		/// </summary>
+		public static bool connected = false;
+
+		/// <summary>
+		/// if should go to next form
+		/// </summary>
+		public static bool NextForm = false;
+
+		/// <summary>
+		/// Global and main ObjectTCPClient
+		/// </summary>
 		public static ObjectTcpClient TCPClient { get; set; } = new ObjectTcpClient();
+
+		/// <summary>
+		///  Global Network Stream
+		/// </summary>
 		public static ObjectNetworkStream TCPNetworkStream { get; set; }
+
+		/// <summary>
+		/// Global User Information
+		/// </summary>
 		public static UserInformationPack CurrentUser { get; set; }
+
+		/// <summary>
+		/// Binary Formatter for objects
+		/// </summary>
 		public static BinaryFormatter _bFormatter = new BinaryFormatter();
 		#endregion
 
-		public Form1()
+		public MainForm()
 		{
 			InitializeComponent();
 		}
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
+			//Create second thread to connect to server so it doesn't freeze the gui
 			Thread TPCConnectionThread = new Thread(() => ConnectToServer(this));
 			TPCConnectionThread.Start();
 		}
@@ -108,10 +139,7 @@ namespace GUIClient
 			SignType.Text = "Sign Up";
 			SignIn = false;
 		}
-		private void SignUpButton_DoubleClick(object sender, EventArgs e)
-		{
-			TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.LogOut));
-		}
+
 		private void UsernameTextBox_TextChanged(object sender, EventArgs e)
 		{
 			EnableDoneButtonOn();
@@ -122,6 +150,10 @@ namespace GUIClient
 			EnableDoneButtonOn();
 		}
 
+		/// <summary>
+		/// Validate if all conditions are met
+		/// </summary>
+		/// <returns>True if conditions are met, false if not</returns>
 		private bool EnableDoneButtonOn()
 		{
 			if (UsernameTextBox.TextLength > 0 && PasswordTextBox.TextLength > 0 && connected) { DoneButton.Enabled = true; return true; } else { DoneButton.Enabled = false; return false; }
@@ -135,12 +167,15 @@ namespace GUIClient
 
 		#region Threading
 
+		/// <summary>
+		/// async function so program waits for Sign process is complete
+		/// </summary>
 		private async void AwaitThread()
 		{
 			await Task.Run(() => LoginSign(this, UsernameTextBox.Text, PasswordTextBox.Text));
 			if (NextForm)
 			{
-				Form2 ChatForm = new Form2(this);
+				ChatForm ChatForm = new ChatForm(this);
 				ChatForm.Show();
 				this.Hide();
 			}
@@ -148,6 +183,7 @@ namespace GUIClient
 
 		private void UsernameTextBox_KeyDown(Object sender, KeyEventArgs e)
 		{
+			// if enter is done and all conditions are met, do as if Done Button was clicked
 			if (e.KeyCode == Keys.Enter)
 			{
 				if (EnableDoneButtonOn())
@@ -162,6 +198,7 @@ namespace GUIClient
 
 		private void PasswordTextBox_KeyDown(Object sender, KeyEventArgs e)
 		{
+			// if enter is done and all conditions are met, do as if Done Button was clicked
 			if (e.KeyCode == Keys.Enter)
 			{
 				if (EnableDoneButtonOn())
@@ -174,14 +211,23 @@ namespace GUIClient
 			}
 		}
 
-		private static void LoginSign(Form1 CurrentForm, String Username, String Password)
+		/// <summary>
+		/// Function for sending and receiving logging/sign up details to server
+		/// </summary>
+		/// <param name="CurrentForm">this form</param>
+		/// <param name="Username">Wanted Username</param>
+		/// <param name="Password">Wanted Password</param>
+		private static void LoginSign(MainForm CurrentForm, String Username, String Password)
 		{
 			CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Visible = true; });
 			ResponsePacket Received;
+
+			// if user wants to log in
 			if (SignIn)
 			{
 				CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = "Logging In\nMight take a sec"; });
 
+				// write object to server
 				TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.SignIn, Username, Password));
 				Received = (ResponsePacket)_bFormatter.Deserialize(TCPNetworkStream);
 				switch (Received.Response)
@@ -199,12 +245,18 @@ namespace GUIClient
 						break;
 				}
 			}
+			// if user wants to sign up
 			else
 			{
 				CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = "Creating Account\nMight take a sec"; });
 
+				//write object to server
 				TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.SignUp, Username, Password));
+
+				// get response back
 				Received = (ResponsePacket)_bFormatter.Deserialize(TCPNetworkStream);
+
+				// switch for response codes
 				switch (Received.Response)
 				{
 					case NetworkReponse.ResponseCodes.successful:
@@ -218,12 +270,12 @@ namespace GUIClient
 				}
 			}
 
+			// if responses is user being already logged in, goes for both
 			if (Received.Response == NetworkReponse.ResponseCodes.AlreadyLogged)
 			{
 				CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = Received.ResponseString; });
 			}
 
-			CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Visible = true; });
 			return;
 		}
 
@@ -232,7 +284,7 @@ namespace GUIClient
 		/// Thread for connecting to server |
 		/// made as thread to not hold up gui thread
 		/// </summary>
-		private static void ConnectToServer(Form1 CurrentForm)
+		private static void ConnectToServer(MainForm CurrentForm)
 		{
 			while (true)
 			{

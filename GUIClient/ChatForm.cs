@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace GUIClient
 {
-	public partial class Form2 : Form
+	public partial class ChatForm : Form
 	{
 		[DllImport("user32.dll")]
 		static extern bool HideCaret(IntPtr hWnd);
@@ -78,7 +78,7 @@ namespace GUIClient
 		#endregion
 
 		#region Global Variables
-		public Form1 FormParent = null;
+		public MainForm FormParent = null;
 		#endregion
 
 		public void WriteToConsole(String Message)
@@ -106,17 +106,17 @@ namespace GUIClient
 			}
 		}
 
-		public Form2(Form1 Parent)
+		public ChatForm(MainForm Parent)
 		{
 			FormParent = Parent;
 			InitializeComponent();
 		}
 		private void Form2_Load(Object sender, EventArgs e)
 		{
-			Thread TPCConnectionThread = new Thread(() => ListenThread(Form1.TCPNetworkStream, this));
+			Thread TPCConnectionThread = new Thread(() => ListenThread(MainForm.TCPNetworkStream, this));
 			TPCConnectionThread.Start();
 
-			Form3 SideForm = new Form3(this);
+			DockingForm SideForm = new DockingForm(this);
 			SideForm.FormParent = this;
 			SideForm.Left = this.Left + this.Width + 10;
 			SideForm.Top = this.Top + (this.Height - SideForm.Height) / 2;
@@ -150,7 +150,7 @@ namespace GUIClient
 		{
 			if (e.KeyCode == Keys.Enter)
 			{
-				Form1.TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.Message, Input.Text));
+				MainForm.TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.Message, Input.Text));
 
 				Input.Text = "";
 
@@ -160,7 +160,7 @@ namespace GUIClient
 		}
 
 		#region Threading
-		private static void ListenThread(ObjectNetworkStream ListenStream, Form2 CurrentForm)
+		private static void ListenThread(ObjectNetworkStream ListenStream, ChatForm CurrentForm)
 		{
 			while (true)
 			{
@@ -168,7 +168,7 @@ namespace GUIClient
 				{
 					Byte[] ByteBuffer = new Byte[1024];
 
-					ResponsePacket Received = (ResponsePacket)Form1._bFormatter.Deserialize(ListenStream);
+					ResponsePacket Received = (ResponsePacket)MainForm._bFormatter.Deserialize(ListenStream);
 
 					switch (Received.Response)
 					{

@@ -8,98 +8,176 @@ using System.Text;
 
 namespace Networking.Packets
 {
+	/// <summary>
+	/// From user to server operation types
+	/// </summary>
 	public enum NetworkOperationTypes : ushort
 	{
 		SignIn = 0,
 		SignUp = 1,
 		LogOut = 2,
-		Message = 3,
+		Message = 3, // Sending message
 	}
 
+	/// <summary>
+	/// for multiple server reponses
+	/// </summary>
 	public static class NetworkReponse
 	{
+		/// <summary>
+		/// server response codes
+		/// </summary>
 		public enum ResponseCodes : ushort
 		{
-			successful = 0,
-			WrongPass = 1,
-			NotFound = 2,
-			UserExists = 3,
-			AlreadyLogged = 4,
-			MessageSend = 5,
+			successful = 0, // operation worked
+			WrongPass = 1, // wrong password input (login only so far)
+			NotFound = 2, // username doesn't exist (login only)
+			UserExists = 3, // username already exists (sign up only)
+			AlreadyLogged = 4, // Already logged in to an account (both)
+			MessageSend = 5, // sending message to user
 		}
 	}
 
+	/// <summary>
+	/// Packet base
+	/// </summary>
 	[Serializable]
 	public class Packet
 	{
-		public virtual String PacketType { get; } = "Packet";
-
 		public Packet() { }
 	}
 
+	/// <summary>
+	/// Request from user to server
+	/// </summary>
 	[Serializable]
 	public class RequestPacket : Packet
 	{
-		public override String PacketType { get; } = "SignPacket";
+		/// <summary>
+		/// Requested Operation type from user
+		/// </summary>
+		public NetworkOperationTypes RequestedOperationType { get; set; }
 
-		public NetworkOperationTypes OpType { get; set; }
-
+		/// <summary>
+		/// user name sent from user
+		/// </summary>
 		public String Username { get; set; }
 
+		/// <summary>
+		/// Password sent from user (needs to get hashed/encrypted)
+		/// </summary>
 		public String Password { set; get; }
 
+		/// <summary>
+		/// any message sent (mostly anything that doesn't fit into username or password category)
+		/// </summary>
 		public String Message { set; get; }
 
 		public RequestPacket() { }
-		public RequestPacket(NetworkOperationTypes opType)
+
+		/// <summary>
+		/// Just operation type (mostly for log out or operations that don't need any other input)
+		/// </summary>
+		/// <param name="requestedOperationType">Operation type</param>
+		public RequestPacket(NetworkOperationTypes requestedOperationType)
 		{
-			OpType = opType;
+			RequestedOperationType = requestedOperationType;
 		}
-		public RequestPacket(NetworkOperationTypes opType, String message)
+
+		/// <summary>
+		/// Operation with a message (Currently only message operations)
+		/// </summary>
+		/// <param name="requestedOperationType">Operation type</param>
+		/// <param name="message">message being sent</param>
+		public RequestPacket(NetworkOperationTypes requestedOperationType, String message)
 		{
-			OpType = opType;
+			RequestedOperationType = requestedOperationType;
 			Message = message;
 		}
-		public RequestPacket(NetworkOperationTypes opType, String username, String password)
+
+		/// <summary>
+		/// Sign in or Sign up request
+		/// </summary>
+		/// <param name="requestedOperationType">Operation Type</param>
+		/// <param name="username">username</param>
+		/// <param name="password">password</param>
+		public RequestPacket(NetworkOperationTypes requestedOperationType, String username, String password)
 		{
-			OpType = opType;
+			RequestedOperationType = requestedOperationType;
 			Username = username;
 			Password = password;
 		}
 	}
 
+	/// <summary>
+	/// Server reponse to user
+	/// </summary>
 	[Serializable]
 	public class ResponsePacket : Packet
 	{
-		public override String PacketType { get; } = "ResponsePacket";
-
+		/// <summary>
+		/// Response type
+		/// </summary>
 		public NetworkReponse.ResponseCodes Response { get; set; }
+
+		/// <summary>
+		/// Operation being responded to (incase it is needed in a function)
+		/// </summary>
 		public NetworkOperationTypes ReponseOperation { get; set; }
 
+		/// <summary>
+		/// any message that goes with the response
+		/// </summary>
 		public String ResponseString { get; set; }
 
-		public NetSafeUser currentUser { get; set; }
+		/// <summary>
+		/// Information for the client e.g. username, usercount and etc
+		/// </summary>
+		public UserInformationPack currentUser { get; set; }
 
 		public ResponsePacket() { }
 
+		/// <summary>
+		/// basic response
+		/// </summary>
+		/// <param name="response">response type</param>
+		/// <param name="ResponseOp">Request that was being responded to</param>
 		public ResponsePacket(NetworkReponse.ResponseCodes response, NetworkOperationTypes ResponseOp)
 		{
 			Response = response;
 			ReponseOperation = ResponseOp;
 		}
-		public ResponsePacket(NetworkReponse.ResponseCodes response, NetworkOperationTypes ResponseOp, NetSafeUser CurrentUser)
+
+		/// <summary>
+		/// Basic response plus the information (not done for the one above incase of failed login/signup attempts)
+		/// </summary>
+		/// <param name="response">response type</param>
+		/// <param name="ResponseOp">Request that was being responded to</param>
+		/// <param name="CurrentUser">Current User infomation pack</param>
+		public ResponsePacket(NetworkReponse.ResponseCodes response, NetworkOperationTypes ResponseOp, UserInformationPack CurrentUser)
 		{
 			Response = response;
 			ReponseOperation = ResponseOp;
 			currentUser = CurrentUser;
 		}
 
+		/// <summary>
+		/// Simple response with message (usually just for chat and send all)
+		/// </summary>
+		/// <param name="response">response type</param>
+		/// <param name="message">message being sent</param>
 		public ResponsePacket(NetworkReponse.ResponseCodes response, String message)
 		{
 			Response = response;
 			ResponseString = message;
 		}
 
+		/// <summary>
+		/// basic response but with text incase of dynamic error message
+		/// </summary>
+		/// <param name="response">response type</param>
+		/// <param name="ResponseOp">Request that was being responded to</param>
+		/// <param name="SentText">extra info</param>
 		public ResponsePacket(NetworkReponse.ResponseCodes response, NetworkOperationTypes ResponseOp, String SentText)
 		{
 			Response = response;
@@ -108,14 +186,24 @@ namespace Networking.Packets
 		}
 	}
 
+	/// <summary>
+	/// Information for user
+	/// </summary>
 	[Serializable]
-	public class NetSafeUser
+	public class UserInformationPack
 	{
+		/// <summary>
+		/// User's username
+		/// </summary>
 		public String Username { get; set; }
 
-		public NetSafeUser() { }
+		public UserInformationPack() { }
 
-		public NetSafeUser(String username)
+		/// <summary>
+		/// Basic UserInformationPack
+		/// </summary>
+		/// <param name="username">Client's username</param>
+		public UserInformationPack(String username)
 		{
 			Username = username;
 		}
@@ -124,6 +212,9 @@ namespace Networking.Packets
 
 namespace Networking.ObjectStream
 {
+	/// <summary>
+	/// Custom Network stream with object sending ablities
+	/// </summary>
 	public class ObjectNetworkStream : NetworkStream
 	{
 		private readonly BinaryFormatter _bFormatter = new BinaryFormatter();
@@ -154,6 +245,9 @@ namespace Networking.ObjectStream
 
 namespace Networking.TCP
 {
+	/// <summary>
+	/// Custom TCP Client Object with network stream compatibility
+	/// </summary>
 	public class ObjectTcpClient : TcpClient
 	{
 		private ObjectNetworkStream ObjStream;
@@ -168,6 +262,11 @@ namespace Networking.TCP
 			Client = acceptedSocket;
 		}
 
+		/// <summary>
+		/// Gives ObjectNetworkStream
+		/// </summary>
+		/// <returns>ObjectNetworkStream</returns>
+		/// <exception cref="InvalidOperationException">not connected</exception>
 		public new ObjectNetworkStream GetStream()
 		{
 			if (!Client.Connected)
@@ -184,12 +283,20 @@ namespace Networking.TCP
 		}
 	}
 
+	/// <summary>
+	/// Custom TCP listener Object for outputing ObjectTCPClient
+	/// </summary>
 	public class ObjectTcpListener : TcpListener
 	{
 		public ObjectTcpListener(IPEndPoint localEP) : base(localEP) { }
 		public ObjectTcpListener(int port) : base(port) { }
 		public ObjectTcpListener(IPAddress localaddr, int port) : base(localaddr, port) { }
 
+		/// <summary>
+		/// Ouputs ObjectTcpClient instead of TcpClient
+		/// </summary>
+		/// <returns>ObjectTcpClient</returns>
+		/// <exception cref="InvalidOperationException">idk</exception>
 		public new ObjectTcpClient AcceptTcpClient()
 		{
 			if (!this.Active)

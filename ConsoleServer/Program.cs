@@ -10,6 +10,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Sockets;
 
 namespace DOSServer
 {
@@ -55,11 +56,20 @@ namespace DOSServer
 		}
 
 		#region Threading
+		private static void UDPListenThread()
+		{
+			while (true)
+			{
+
+			}
+		}
+
+
 		/// <summary>
 		/// Function for Handling new Clients
 		/// </summary>
 		/// <param name="Client">Client Object</param>
-		public static void HandleNewTCPClient(ObjectTcpClient Client)
+		private static void HandleNewTCPClient(ObjectTcpClient Client)
 		{
 			User CurrentUser = new User();
 
@@ -78,7 +88,7 @@ namespace DOSServer
 
 					ResponsePacket response = new ResponsePacket();
 
-					switch (Received.OpType)
+					switch (Received.RequestedOperationType)
 					{
 						case NetworkOperationTypes.SignIn:
 
@@ -92,7 +102,7 @@ namespace DOSServer
 									{
 										CurrentUser = userInList;
 										CurrentUser.tcpClient = Client;
-										response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignIn, new NetSafeUser(CurrentUser.name));
+										response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignIn, new UserInformationPack(CurrentUser.name));
 										Console.WriteLine(ConsoleLog($"{CurrentUser.name} Has logged in"));
 										ContinueSignProc = false;
 										break;
@@ -123,7 +133,7 @@ namespace DOSServer
 							{
 								CurrentUser = new User(Client, Received.Username, PasswordHashing.CreateHash(Received.Password));
 								User.UserArray.Add(CurrentUser);
-								response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignUp, new NetSafeUser(CurrentUser.name));
+								response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignUp, new UserInformationPack(CurrentUser.name));
 								Console.WriteLine(ConsoleLog($"New account Created: {CurrentUser.name}"));
 								ContinueSignProc = false;
 
@@ -141,11 +151,11 @@ namespace DOSServer
 				{
 					Received = (RequestPacket)_bFormatter.Deserialize(ClientNetworkStream);
 
-					switch (Received.OpType)
+					switch (Received.RequestedOperationType)
 					{
 						case NetworkOperationTypes.SignIn:
 						case NetworkOperationTypes.SignUp:
-							ClientNetworkStream.Write(new ResponsePacket(NetworkReponse.ResponseCodes.AlreadyLogged, Received.OpType, $"Already Logged in as {CurrentUser.name}"));
+							ClientNetworkStream.Write(new ResponsePacket(NetworkReponse.ResponseCodes.AlreadyLogged, Received.RequestedOperationType, $"Already Logged in as {CurrentUser.name}"));
 							break;
 						case NetworkOperationTypes.LogOut:
 							Console.WriteLine(ConsoleLog($"{CurrentUser.name} Logged out"));

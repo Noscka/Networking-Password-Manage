@@ -79,7 +79,7 @@ namespace GUIClient
 		public static bool SignIn = false, connected = false, NextForm = false;
 		public static ObjectTcpClient TCPClient { get; set; } = new ObjectTcpClient();
 		public static ObjectNetworkStream TCPNetworkStream { get; set; }
-		public static NetSafeUser CurrentUser { get; set; }
+		public static UserInformationPack CurrentUser { get; set; }
 		public static BinaryFormatter _bFormatter = new BinaryFormatter();
 		#endregion
 

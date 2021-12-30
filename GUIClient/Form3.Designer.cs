@@ -32,6 +32,7 @@
 			this.MinimisePictureBox = new System.Windows.Forms.PictureBox();
 			this.ExitPictureBox = new System.Windows.Forms.PictureBox();
 			this.UsernameLabel = new System.Windows.Forms.Label();
+			this.UserCount = new System.Windows.Forms.Label();
 			this.Control_Bar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinimisePictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ExitPictureBox)).BeginInit();
@@ -83,11 +84,22 @@
 			this.UsernameLabel.AutoSize = true;
 			this.UsernameLabel.Font = new System.Drawing.Font("Segoe UI", 14F);
 			this.UsernameLabel.ForeColor = System.Drawing.Color.Lime;
-			this.UsernameLabel.Location = new System.Drawing.Point(10, 40);
+			this.UsernameLabel.Location = new System.Drawing.Point(10, 75);
 			this.UsernameLabel.Name = "UsernameLabel";
 			this.UsernameLabel.Size = new System.Drawing.Size(63, 25);
 			this.UsernameLabel.TabIndex = 5;
 			this.UsernameLabel.Text = "label1";
+			// 
+			// UserCount
+			// 
+			this.UserCount.AutoSize = true;
+			this.UserCount.Font = new System.Drawing.Font("Segoe UI", 14F);
+			this.UserCount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+			this.UserCount.Location = new System.Drawing.Point(10, 40);
+			this.UserCount.Name = "UserCount";
+			this.UserCount.Size = new System.Drawing.Size(63, 25);
+			this.UserCount.TabIndex = 5;
+			this.UserCount.Text = "label1";
 			// 
 			// Form3
 			// 
@@ -95,6 +107,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(7)))), ((int)(((byte)(7)))), ((int)(((byte)(7)))));
 			this.ClientSize = new System.Drawing.Size(350, 200);
+			this.Controls.Add(this.UserCount);
 			this.Controls.Add(this.UsernameLabel);
 			this.Controls.Add(this.Control_Bar);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -116,5 +129,6 @@
 		private System.Windows.Forms.PictureBox MinimisePictureBox;
 		private System.Windows.Forms.PictureBox ExitPictureBox;
 		private System.Windows.Forms.Label UsernameLabel;
+		private System.Windows.Forms.Label UserCount;
 	}
 }

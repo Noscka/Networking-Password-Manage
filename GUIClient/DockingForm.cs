@@ -79,6 +79,12 @@ namespace GUIClient
 
 		#endregion
 
+		private void DockingForm_FormClosing(Object sender, FormClosingEventArgs e)
+		{
+			Environment.Exit(0);
+
+		}
+
 		#region Global Variables
 		public ChatForm FormParent = null;
 		private bool Docked = false, DoneSettingBar = true;

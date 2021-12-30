@@ -113,6 +113,11 @@ namespace GUIClient
 		public static BinaryFormatter _bFormatter = new BinaryFormatter();
 		#endregion
 
+		private void MainForm_FormClosing(Object sender, FormClosingEventArgs e)
+		{
+			Environment.Exit(0);
+		}
+
 		public MainForm()
 		{
 			InitializeComponent();
@@ -330,7 +335,6 @@ namespace GUIClient
 				}
 			}
 		}
-
 	}
 	#endregion
 }

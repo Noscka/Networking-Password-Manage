@@ -81,6 +81,10 @@ namespace GUIClient
 		public MainForm FormParent = null;
 		#endregion
 
+		private void ChatForm_FormClosing(Object sender, FormClosingEventArgs e)
+		{
+			Environment.Exit(0);
+		}
 		public void WriteToConsole(String Message)
 		{
 			this.Output.AppendText(Message + Environment.NewLine);
@@ -202,7 +206,7 @@ namespace GUIClient
 				}
 
 			}
-		} 
+		}
 		#endregion
 	}
 }

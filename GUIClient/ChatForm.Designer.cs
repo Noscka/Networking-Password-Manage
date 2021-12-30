@@ -122,7 +122,7 @@
 			this.DockBar.TabIndex = 5;
 			this.DockBar.Visible = false;
 			// 
-			// Form2
+			// ChatForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -133,9 +133,10 @@
 			this.Controls.Add(this.Output);
 			this.Controls.Add(this.Control_Bar);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-			this.Name = "Form2";
+			this.Name = "ChatForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Form2";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ChatForm_FormClosing);
 			this.Load += new System.EventHandler(this.Form2_Load);
 			this.Control_Bar.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.MinimisePictureBox)).EndInit();

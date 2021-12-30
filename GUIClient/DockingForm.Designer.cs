@@ -101,7 +101,7 @@
 			this.UserCount.TabIndex = 5;
 			this.UserCount.Text = "label1";
 			// 
-			// Form3
+			// DockingForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -111,9 +111,12 @@
 			this.Controls.Add(this.UsernameLabel);
 			this.Controls.Add(this.Control_Bar);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-			this.Name = "Form3";
+			this.Name = "DockingForm";
+			this.ShowIcon = false;
+			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "Form3";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DockingForm_FormClosing);
 			this.Load += new System.EventHandler(this.Form3_Load);
 			this.Control_Bar.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.MinimisePictureBox)).EndInit();

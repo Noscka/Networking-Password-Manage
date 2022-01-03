@@ -49,7 +49,7 @@ namespace GUIClient
 
 		private void ExitBox_Click(object sender, EventArgs e)
 		{
-			FormParent.FormParent.Close();
+			Environment.Exit(0);
 		}
 
 		private void ExitBox_MouseHover(object sender, EventArgs e)
@@ -82,14 +82,13 @@ namespace GUIClient
 		private void DockingForm_FormClosing(Object sender, FormClosingEventArgs e)
 		{
 			Environment.Exit(0);
-
 		}
 
 		#region Global Variables
-		public ChatForm FormParent = null;
+		public static ChatForm FormParent = null;
 		private bool Docked = false, DoneSettingBar = true;
 		private int DockedHeight;
-		private ManualResetEvent MRSE = new ManualResetEvent(false);
+		private readonly ManualResetEvent MRSE = new ManualResetEvent(false);
 		#endregion
 
 		public DockingForm(ChatForm Parent)
@@ -100,7 +99,8 @@ namespace GUIClient
 
 		private void Form3_Load(Object sender, EventArgs e)
 		{
-			UsernameLabel.Text = $"Username: {MainForm.CurrentUser.Username}";
+			//UsernameLabel.Text = $"Username: {MainForm.CurrentUser.Username}";
+			UsernameLabel.Text = $"UNCOMMENT 102";
 
 			Thread DockingThread = new Thread(() => DockedThread(this));
 			DockingThread.Name = "Docking Thread";
@@ -148,13 +148,12 @@ namespace GUIClient
 				}
 			}
 		}
-		#endregion
 
 		private bool DockingValidation()
 		{
 			if (this.Top >= FormParent.Top && this.Top <= FormParent.Top + FormParent.Height)
 			{
-				if(this.Left >= FormParent.Left + FormParent.Width - 30 && this.Left <= FormParent.Left + FormParent.Width + 30)
+				if (this.Left >= FormParent.Left + FormParent.Width - 30 && this.Left <= FormParent.Left + FormParent.Width + 30)
 				{
 					DockedHeight = this.Top - FormParent.Top;
 					return true;
@@ -162,5 +161,6 @@ namespace GUIClient
 			}
 			return false;
 		}
+		#endregion
 	}
 }

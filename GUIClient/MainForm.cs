@@ -128,6 +128,10 @@ namespace GUIClient
 			//Create second thread to connect to server so it doesn't freeze the gui
 			Thread TPCConnectionThread = new Thread(() => ConnectToServer(this));
 			TPCConnectionThread.Start();
+
+			ChatForm ChatForm = new ChatForm(this);
+			ChatForm.Show();
+			this.Hide();
 		}
 
 		#region SignIn/Up logic
@@ -181,7 +185,7 @@ namespace GUIClient
 			if (NextForm)
 			{
 				ChatForm ChatForm = new ChatForm(this);
-				ChatForm.Show();
+				ChatForm.Show(this);
 				this.Hide();
 			}
 		}

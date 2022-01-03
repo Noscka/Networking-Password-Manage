@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
@@ -312,10 +313,24 @@ namespace Networking.TCP
 	}
 }
 
-namespace HexDump
+namespace Networking.Utils
 {
-	class Utils
+	public static class Utils
 	{
+		[DllImport("user32.dll")]
+		private static extern IntPtr GetForegroundWindow();
+
+		/// <summary>
+		/// check if form or control is focused
+		/// </summary>
+		/// <param name="handle">Control handle</param>
+		/// <returns>true if focused, false if not</returns>
+		public static bool IsActive(IntPtr handle)
+		{
+			IntPtr activeHandle = GetForegroundWindow();
+			return (activeHandle == handle);
+		}
+
 		public static string HexDump(byte[] bytes, int bytesPerLine = 16)
 		{
 			if (bytes == null) return "<null>";

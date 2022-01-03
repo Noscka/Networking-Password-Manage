@@ -78,7 +78,7 @@ namespace GUIClient
 		#endregion
 
 		#region Global Variables
-		public MainForm FormParent = null;
+		public static MainForm FormParent = null;
 		#endregion
 
 		private void ChatForm_FormClosing(Object sender, FormClosingEventArgs e)
@@ -120,11 +120,13 @@ namespace GUIClient
 			Thread TPCConnectionThread = new Thread(() => ListenThread(MainForm.TCPNetworkStream, this));
 			TPCConnectionThread.Start();
 
-			DockingForm SideForm = new DockingForm(this);
-			SideForm.FormParent = this;
-			SideForm.Left = this.Left + this.Width + 10;
-			SideForm.Top = this.Top + (this.Height - SideForm.Height) / 2;
-			SideForm.Show();
+			DockingForm InfoDockingForm = new DockingForm(this);
+			InfoDockingForm.Left = this.Left + this.Width + 10;
+			InfoDockingForm.Top = this.Top + (this.Height - InfoDockingForm.Height) / 2;
+			InfoDockingForm.Show(this);
+
+			ChatOptionsForm ChatOptionFormInstance= new ChatOptionsForm(this);
+			ChatOptionFormInstance.Show(this);
 		}
 
 		private void Output_GotFocus(Object sender, EventArgs e)

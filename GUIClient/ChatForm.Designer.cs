@@ -107,7 +107,7 @@
 			this.Input.MaxLength = 10000;
 			this.Input.Name = "Input";
 			this.Input.Size = new System.Drawing.Size(780, 29);
-			this.Input.TabIndex = 4;
+			this.Input.TabIndex = 0;
 			this.Input.Enter += new System.EventHandler(this.Input_Enter);
 			this.Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Input_KeyDown);
 			this.Input.Leave += new System.EventHandler(this.Input_Leave);

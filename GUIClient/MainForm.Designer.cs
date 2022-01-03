@@ -71,7 +71,7 @@
 			this.Control_Bar.Location = new System.Drawing.Point(0, 0);
 			this.Control_Bar.Name = "Control_Bar";
 			this.Control_Bar.Size = new System.Drawing.Size(649, 30);
-			this.Control_Bar.TabIndex = 2;
+			this.Control_Bar.TabIndex = 0;
 			this.Control_Bar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Control_Bar_MouseMove);
 			// 
 			// MinimisePictureBox
@@ -111,7 +111,7 @@
 			this.SignInAUpPanel.Location = new System.Drawing.Point(0, 30);
 			this.SignInAUpPanel.Name = "SignInAUpPanel";
 			this.SignInAUpPanel.Size = new System.Drawing.Size(100, 311);
-			this.SignInAUpPanel.TabIndex = 3;
+			this.SignInAUpPanel.TabIndex = 2;
 			// 
 			// SignUpButton
 			// 
@@ -122,7 +122,7 @@
 			this.SignUpButton.Location = new System.Drawing.Point(7, 60);
 			this.SignUpButton.Name = "SignUpButton";
 			this.SignUpButton.Size = new System.Drawing.Size(87, 26);
-			this.SignUpButton.TabIndex = 2;
+			this.SignUpButton.TabIndex = 1;
 			this.SignUpButton.Text = "Sign Up";
 			this.SignUpButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.SignUpButton.Click += new System.EventHandler(this.SignUpButton_Click);
@@ -136,7 +136,7 @@
 			this.SignInButton.Location = new System.Drawing.Point(7, 18);
 			this.SignInButton.Name = "SignInButton";
 			this.SignInButton.Size = new System.Drawing.Size(87, 26);
-			this.SignInButton.TabIndex = 2;
+			this.SignInButton.TabIndex = 0;
 			this.SignInButton.Text = "Sign In";
 			this.SignInButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.SignInButton.Click += new System.EventHandler(this.SignInButton_Click);
@@ -155,7 +155,7 @@
 			this.SignInUpPanel.Location = new System.Drawing.Point(100, 30);
 			this.SignInUpPanel.Name = "SignInUpPanel";
 			this.SignInUpPanel.Size = new System.Drawing.Size(549, 311);
-			this.SignInUpPanel.TabIndex = 4;
+			this.SignInUpPanel.TabIndex = 1;
 			this.SignInUpPanel.Visible = false;
 			// 
 			// panel1
@@ -165,7 +165,7 @@
 			this.panel1.Location = new System.Drawing.Point(0, 223);
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(549, 88);
-			this.panel1.TabIndex = 5;
+			this.panel1.TabIndex = 3;
 			// 
 			// ErrorInfoLogin
 			// 
@@ -176,7 +176,7 @@
 			this.ErrorInfoLogin.Location = new System.Drawing.Point(6, 6);
 			this.ErrorInfoLogin.Name = "ErrorInfoLogin";
 			this.ErrorInfoLogin.Size = new System.Drawing.Size(96, 22);
-			this.ErrorInfoLogin.TabIndex = 3;
+			this.ErrorInfoLogin.TabIndex = 0;
 			this.ErrorInfoLogin.Text = "ErrorInfo";
 			this.ErrorInfoLogin.Visible = false;
 			// 
@@ -204,7 +204,7 @@
 			this.SignType.Location = new System.Drawing.Point(18, 18);
 			this.SignType.Name = "SignType";
 			this.SignType.Size = new System.Drawing.Size(57, 22);
-			this.SignType.TabIndex = 3;
+			this.SignType.TabIndex = 0;
 			this.SignType.Text = "Type";
 			// 
 			// label2
@@ -242,7 +242,7 @@
 			this.PasswordTextBox.MaxLength = 100;
 			this.PasswordTextBox.Name = "PasswordTextBox";
 			this.PasswordTextBox.Size = new System.Drawing.Size(219, 26);
-			this.PasswordTextBox.TabIndex = 1;
+			this.PasswordTextBox.TabIndex = 2;
 			this.PasswordTextBox.TextChanged += new System.EventHandler(this.PasswordTextBox_TextChanged);
 			this.PasswordTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PasswordTextBox_KeyDown);
 			// 

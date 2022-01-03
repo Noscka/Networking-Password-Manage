@@ -50,6 +50,7 @@ namespace GUIClient
 		private void LogOutButton_Click(Object sender, EventArgs e)
 		{
 			MainForm.TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.LogOut));
+
 		}
 	}
 
@@ -71,15 +72,16 @@ namespace GUIClient
 			this.FadeOutTimer.Tick += FadeOut;
 
 			this.Cursor = Cursors.Hand;
-
 		}
 
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			base.OnPaint(pe);
 			this.ForeColor = Color.FromArgb(150, 150, 150);
-			this.Font = new Font("Helvetica Rounded", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+			this.Font = new Font("Helvetica Rounded", 13F, FontStyle.Regular, GraphicsUnit.Point, 0);
 			this.BackColor = Color.FromArgb(Opacity, 160, 120, 230);
+			this.AutoSize = false;
+			this.TextAlign = ContentAlignment.MiddleCenter;
 		}
 
 		private void RedrawBackground()

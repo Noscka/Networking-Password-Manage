@@ -2,9 +2,6 @@
 using System;
 using System.Threading;
 using System.Windows.Forms;
-using System.Drawing;
-using System.ComponentModel;
-using Networking.Controls;
 
 
 
@@ -12,7 +9,6 @@ namespace GUIClient
 {
 	public partial class ChatOptionsForm : Form
 	{
-		private PictureBox pictureBox1;
 		public static ChatForm FormParent;
 
 		public ChatOptionsForm(ChatForm formParent)
@@ -55,7 +51,6 @@ namespace GUIClient
 		private void LogOutButton_Click(Object sender, EventArgs e)
 		{
 			MainForm.TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.LogOut));
-
 		}
 	}
 }

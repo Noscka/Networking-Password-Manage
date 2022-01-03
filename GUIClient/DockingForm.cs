@@ -99,8 +99,7 @@ namespace GUIClient
 
 		private void Form3_Load(Object sender, EventArgs e)
 		{
-			//UsernameLabel.Text = $"Username: {MainForm.CurrentUser.Username}";
-			UsernameLabel.Text = $"UNCOMMENT 102";
+			UsernameLabel.Text = $"Username: {MainForm.CurrentUser.Username}";
 
 			Thread DockingThread = new Thread(() => DockedThread(this));
 			DockingThread.Name = "Docking Thread";

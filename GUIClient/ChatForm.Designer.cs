@@ -34,15 +34,18 @@
 			this.Output = new System.Windows.Forms.TextBox();
 			this.Input = new System.Windows.Forms.TextBox();
 			this.DockBar = new System.Windows.Forms.Panel();
+			this.SlidePictureBox = new System.Windows.Forms.PictureBox();
 			this.Control_Bar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinimisePictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ExitPictureBox)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.SlidePictureBox)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// Control_Bar
 			// 
 			this.Control_Bar.BackColor = System.Drawing.Color.Transparent;
 			this.Control_Bar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.Control_Bar.Controls.Add(this.SlidePictureBox);
 			this.Control_Bar.Controls.Add(this.MinimisePictureBox);
 			this.Control_Bar.Controls.Add(this.ExitPictureBox);
 			this.Control_Bar.Dock = System.Windows.Forms.DockStyle.Top;
@@ -122,6 +125,18 @@
 			this.DockBar.TabIndex = 5;
 			this.DockBar.Visible = false;
 			// 
+			// SlidePictureBox
+			// 
+			this.SlidePictureBox.Dock = System.Windows.Forms.DockStyle.Left;
+			this.SlidePictureBox.Image = global::GUIClient.Properties.Resources.Arrows;
+			this.SlidePictureBox.Location = new System.Drawing.Point(0, 0);
+			this.SlidePictureBox.Name = "SlidePictureBox";
+			this.SlidePictureBox.Size = new System.Drawing.Size(30, 28);
+			this.SlidePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.SlidePictureBox.TabIndex = 4;
+			this.SlidePictureBox.TabStop = false;
+			this.SlidePictureBox.Click += new System.EventHandler(this.SlidePictureBox_Click);
+			// 
 			// ChatForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -141,6 +156,7 @@
 			this.Control_Bar.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.MinimisePictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ExitPictureBox)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.SlidePictureBox)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -154,5 +170,6 @@
 		private System.Windows.Forms.TextBox Output;
 		private System.Windows.Forms.TextBox Input;
 		public System.Windows.Forms.Panel DockBar;
+		private System.Windows.Forms.PictureBox SlidePictureBox;
 	}
 }

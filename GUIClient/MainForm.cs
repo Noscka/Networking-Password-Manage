@@ -105,7 +105,7 @@ namespace GUIClient
 		/// <summary>
 		/// Global User Information
 		/// </summary>
-		public static UserInformationPack CurrentUser { get; set; }
+		public static UserInformationPack CurrentUser { get; set; } = new UserInformationPack("Remove 108 MainForm.cs");
 
 		/// <summary>
 		/// Binary Formatter for objects

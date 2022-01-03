@@ -75,10 +75,26 @@ namespace GUIClient
 			MinimisePictureBox.BackColor = Color.Transparent;
 		}
 
+		private void SlidePictureBox_Click(Object sender, EventArgs e)
+		{
+			if (SlideSettingsOut)
+			{
+				ChatOptionFormInstance.Hide();
+				SlideSettingsOut = false;
+			}
+			else
+			{
+				ChatOptionFormInstance.Show(this);
+				SlideSettingsOut = true;
+			}
+		}
 		#endregion
 
 		#region Global Variables
 		public static MainForm FormParent = null;
+		public ChatOptionsForm ChatOptionFormInstance;
+
+		private bool SlideSettingsOut = false;
 		#endregion
 
 		private void ChatForm_FormClosing(Object sender, FormClosingEventArgs e)
@@ -125,8 +141,7 @@ namespace GUIClient
 			InfoDockingForm.Top = this.Top + (this.Height - InfoDockingForm.Height) / 2;
 			InfoDockingForm.Show(this);
 
-            ChatOptionsForm ChatOptionFormInstance = new ChatOptionsForm(this);
-			ChatOptionFormInstance.Show(this);
+            ChatOptionFormInstance = new ChatOptionsForm(this);
 		}
 
 		private void Output_GotFocus(Object sender, EventArgs e)

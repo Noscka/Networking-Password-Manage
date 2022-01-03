@@ -6,6 +6,11 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+using System.Drawing;
+using System.ComponentModel;
+
 
 namespace Networking.Packets
 {
@@ -402,6 +407,99 @@ namespace Networking.Utils
 			if (val < 0xA0) return ".‘’“”•–—˜™š›œ.žŸ"[val & 0xF];
 			if (val == 0xAD) return '.';   // Soft hyphen: this symbol is zero-width even in monospace fonts
 			return (char)val;   // Normal Latin-1
+		}
+	}
+}
+
+namespace Networking.Controls
+{
+	[DefaultProperty("Text")]
+	public class LabelButton : Label
+	{
+		private System.Windows.Forms.Timer FadeOutTimer = new System.Windows.Forms.Timer(), FadeInTimer = new System.Windows.Forms.Timer();
+
+		private UInt16 opacity = 0;
+
+		[Bindable(true)]
+		[Category("Appearance")]
+		[DefaultValue(0)]
+		public UInt16 Opacity
+		{
+			get
+			{
+				return opacity;
+			}
+			set
+			{
+				opacity = value;
+			}
+		}
+
+		public LabelButton()
+		{
+			this.FadeOutTimer.Interval = 1;
+			this.FadeInTimer.Interval = 1;
+
+			this.MouseLeave += new EventHandler(this.LabelButton_MouseLeave);
+			this.MouseHover += new EventHandler(this.LabelButton_MouseHover);
+
+			this.FadeInTimer.Tick += FadeIn;
+			this.FadeOutTimer.Tick += FadeOut;
+
+			this.Cursor = Cursors.Hand;
+		}
+
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			this.ForeColor = Color.FromArgb(150, 150, 150);
+			this.Font = new Font("Helvetica Rounded", 13F, FontStyle.Regular, GraphicsUnit.Point, 0);
+			this.BackColor = Color.FromArgb(opacity, 160, 120, 230);
+			this.AutoSize = false;
+			this.TextAlign = ContentAlignment.MiddleCenter;
+		}
+
+		private void RedrawBackground()
+		{
+			this.BackColor = Color.FromArgb(opacity, 160, 120, 230);
+		}
+
+		private void LabelButton_MouseHover(Object sender, EventArgs e)
+		{
+			this.FadeOutTimer.Stop();
+			this.FadeInTimer.Start();
+		}
+
+		private void LabelButton_MouseLeave(Object sender, EventArgs e)
+		{
+			this.FadeInTimer.Stop();
+			this.FadeOutTimer.Start();
+		}
+
+		private void FadeIn(Object Sender, EventArgs e)
+		{
+			if (opacity >= 150)
+			{
+				FadeOutTimer.Stop();
+			}
+			else
+			{
+				opacity += 30;
+			}
+			RedrawBackground();
+		}
+
+		private void FadeOut(Object Sender, EventArgs e)
+		{
+			if (opacity <= 1)
+			{
+				FadeOutTimer.Stop();
+			}
+			else
+			{
+				opacity -= 15;
+			}
+			RedrawBackground();
 		}
 	}
 }

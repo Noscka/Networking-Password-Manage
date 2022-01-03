@@ -125,7 +125,7 @@ namespace GUIClient
 			InfoDockingForm.Top = this.Top + (this.Height - InfoDockingForm.Height) / 2;
 			InfoDockingForm.Show(this);
 
-			ChatOptionsForm ChatOptionFormInstance= new ChatOptionsForm(this);
+            ChatOptionsForm ChatOptionFormInstance = new ChatOptionsForm(this);
 			ChatOptionFormInstance.Show(this);
 		}
 

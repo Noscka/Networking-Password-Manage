@@ -132,6 +132,7 @@ namespace GUIClient
 		private void Form2_Load(Object sender, EventArgs e)
 		{
 			Thread TPCConnectionThread = new Thread(() => ListenThread(MainForm.TCPNetworkStream, this));
+			TPCConnectionThread.IsBackground = true;
 			TPCConnectionThread.Start();
 
 			DockingForm InfoDockingForm = new DockingForm(this);

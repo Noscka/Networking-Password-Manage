@@ -44,6 +44,7 @@ namespace ServerTest
 
 				// new thread for the client
 				Thread TCPClientThread = new Thread(() => HandleNewTCPClient(InboundClient));
+				TCPClientThread.IsBackground = true;
 				TCPClientThread.Start();
 			}
 		}

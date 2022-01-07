@@ -34,6 +34,7 @@ namespace GUIClient
 			{
 				Thread DockinBarThread = new Thread(() => DockingBar(this));
 				DockinBarThread.Name = "Docking Bar Thread";
+				DockinBarThread.IsBackground = true;
 				DockinBarThread.Start();
 
 				MRSE.Reset();
@@ -103,6 +104,7 @@ namespace GUIClient
 
 			Thread DockingThread = new Thread(() => DockedThread(this));
 			DockingThread.Name = "Docking Thread";
+			DockingThread.IsBackground = true;
 			DockingThread.Start();
 
 			MRSE.Set();

@@ -90,7 +90,7 @@ namespace GUIClient
 		/// <summary>
 		/// if should go to next form
 		/// </summary>
-		public static bool NextForm = false;
+		private static bool NextForm = false;
 
 		/// <summary>
 		/// Global and main ObjectTCPClient
@@ -111,6 +111,11 @@ namespace GUIClient
 		/// Binary Formatter for objects
 		/// </summary>
 		public static BinaryFormatter _bFormatter = new BinaryFormatter();
+
+		/// <summary>
+		/// public instance for all forms to access
+		/// </summary>
+		public static MainForm StartFormInstance = null;
 		#endregion
 
 		private void MainForm_FormClosing(Object sender, FormClosingEventArgs e)
@@ -125,8 +130,11 @@ namespace GUIClient
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
+			StartFormInstance = this;
+
 			//Create second thread to connect to server so it doesn't freeze the gui
 			Thread TPCConnectionThread = new Thread(() => ConnectToServer(this));
+			TPCConnectionThread.IsBackground = true;
 			TPCConnectionThread.Start();
 
 			ChatForm ChatForm = new ChatForm(this);
@@ -339,6 +347,47 @@ namespace GUIClient
 				}
 			}
 		}
+		#endregion
+		
+		#region Functions
+		public void SoftRestart(SRReasons.srReasons RestartReason)
+		{
+			switch (RestartReason)
+			{
+				case SRReasons.srReasons.Error:
+					break;
+
+				case SRReasons.srReasons.LogOut:
+					//MainForm.TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.LogOut));
+					break;
+			}
+
+			NextForm = false;
+
+			FormCollection fc = Application.OpenForms;
+
+			foreach (Form frm in fc)
+			{
+				if (frm != this)
+				{
+					frm.Dispose();
+					frm.Close();
+				}
+			}
+
+		this.Show();
+		}
+
+		#endregion
 	}
-	#endregion
+}
+
+public static class SRReasons
+{
+	public enum srReasons : UInt16
+	{
+		Error = 0,
+		LogOut = 1,
+	}
+
 }

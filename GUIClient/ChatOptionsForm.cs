@@ -1,5 +1,7 @@
 ﻿using Networking.Packets;
 using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -9,6 +11,25 @@ namespace GUIClient
 {
 	public partial class ChatOptionsForm : Form
 	{
+		public const int WM_NCLBUTTONDOWN = 0xA1;
+		public const int HT_CAPTION = 0x2;
+
+		[DllImportAttribute("user32.dll")]
+		public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+		[DllImportAttribute("user32.dll")]
+		public static extern bool ReleaseCapture();
+
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				const int CS_DROPSHADOW = 0x20000;
+				CreateParams cp = base.CreateParams;
+				cp.ClassStyle |= CS_DROPSHADOW;
+				return cp;
+			}
+		}
+
 		public static ChatForm FormParent;
 		private readonly ManualResetEvent MRSE = new ManualResetEvent(false);
 		private System.Windows.Forms.Timer InSlideTimer = new System.Windows.Forms.Timer(), OutSlideTimer = new System.Windows.Forms.Timer();
@@ -23,6 +44,7 @@ namespace GUIClient
 		private void ChatOptionsForm_Load(Object sender, EventArgs e)
 		{
 			Thread ChatOptionsDockingThread = new Thread(() => DockedThread(this));
+			ChatOptionsDockingThread.IsBackground = true;
 			ChatOptionsDockingThread.Start();
 
 			InSlideTimer.Interval = 1;
@@ -30,6 +52,12 @@ namespace GUIClient
 			InSlideTimer.Tick += SlideInTimerFunctinon;
 			OutSlideTimer.Tick += SlideOutTimerFunctinon;
 			MRSE.Set();
+
+			//System.Drawing.Drawing2D.GraphicsPath shape = new System.Drawing.Drawing2D.GraphicsPath();
+			//shape.AddRectangle(new Rectangle(8, 40, 200, 200));
+			//this.Region = new System.Drawing.Region(shape);
+			//this.Top = (Screen.PrimaryScreen.WorkingArea.Height - 160) / 2;
+			//this.Left = Screen.PrimaryScreen.WorkingArea.Left;
 		}
 
 		private void ChatOptionsForm_FormClosing(Object sender, FormClosingEventArgs e)
@@ -47,25 +75,25 @@ namespace GUIClient
 			OutSlideTimer.Stop();
 			MRSE.Reset();
 
-			Distance = Convert.ToInt16(FormParent.Left - this.Left);
-
 			if (InDirection)
 			{
-				FormParent.WriteToConsole("Going In");
+				Distance = Convert.ToInt16(this.Left - FormParent.Left);
+				this.Owner = null;
+				FormParent.BringToFront();
 				InSlideTimer.Start();
 			}
 			else
 			{
-				this.Show(FormParent);
-				FormParent.WriteToConsole("Going Out");
+				Distance = 0;
+				this.Show();
+				FormParent.BringToFront();
 				OutSlideTimer.Start();
 			}
 		}
 
 		private void SlideInTimerFunctinon(Object sender, EventArgs e)
 		{
-			FormParent.WriteToConsole(Distance >= FormParent.Left - this.Left ? "True" : "False");
-			if (Distance >= FormParent.Left - this.Left)
+			if (FormParent.Left - this.Left <= 0)
 			{
 				this.Hide();
 				InSlideTimer.Stop();
@@ -82,11 +110,11 @@ namespace GUIClient
 		
 		private void SlideOutTimerFunctinon(Object sender, EventArgs e)
 		{
-			FormParent.WriteToConsole($"{FormParent.Left} | {this.Left} | {-this.Width} \\/ {Distance} | {this.Left} " + (Distance <= -this.Width ? "True" : "False"));
 			if (Distance <= -this.Width)
 			{
-				OutSlideTimer.Stop();
+				this.Owner = FormParent;
 				MRSE.Set();
+				OutSlideTimer.Stop();
 			}
 			else
 			{
@@ -106,8 +134,6 @@ namespace GUIClient
 		{
 			while (true)
 			{
-				Thread.Sleep(1);
-
 				CurrentForm.Invoke((MethodInvoker)delegate
 				{
 					CurrentForm.Left = FormParent.Left - CurrentForm.Width;
@@ -121,12 +147,12 @@ namespace GUIClient
 
 		private void LogOutButton_Click(Object sender, EventArgs e)
 		{
-			MainForm.TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.LogOut));
+			MainForm.StartFormInstance.SoftRestart(SRReasons.srReasons.LogOut);
 		}
 		
 		private void TestButton_Click(Object sender, EventArgs e)
 		{
-			MRSE.Set();
+			//this.Region = new Region(new Rectangle(0, 0, this.Width, this.Height));
 		}
 	}
 }

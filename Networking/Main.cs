@@ -17,7 +17,7 @@ namespace Networking.Packets
 	/// <summary>
 	/// From user to server operation types
 	/// </summary>
-	public enum NetworkOperationTypes : ushort
+	public enum NetworkOperationTypes : UInt16
 	{
 		SignIn = 0,
 		SignUp = 1,
@@ -33,7 +33,7 @@ namespace Networking.Packets
 		/// <summary>
 		/// server response codes
 		/// </summary>
-		public enum ResponseCodes : ushort
+		public enum ResponseCodes : UInt16
 		{
 			successful = 0, // operation worked
 			WrongPass = 1, // wrong password input (login only so far)

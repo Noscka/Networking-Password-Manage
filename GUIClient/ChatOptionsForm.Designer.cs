@@ -29,7 +29,16 @@
 		private void InitializeComponent()
 		{
 			this.LogOutButton = new Networking.Controls.LabelButton();
+			this.TestButton = new Networking.Controls.LabelButton();
 			this.SuspendLayout();
+			//
+			// TestButton
+			//
+			this.TestButton.Text = "Test Button";
+			this.TestButton.Name = "TestButton";
+			this.TestButton.Location = new System.Drawing.Point(48, 380);
+			this.TestButton.Size = new System.Drawing.Size(124, 25);
+			this.TestButton.Click += new System.EventHandler(TestButton_Click);
 			// 
 			// LogOutButton
 			// 
@@ -53,6 +62,7 @@
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(7)))), ((int)(((byte)(7)))), ((int)(((byte)(7)))));
 			this.ClientSize = new System.Drawing.Size(220, 450);
 			this.Controls.Add(this.LogOutButton);
+			this.Controls.Add(this.TestButton);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Name = "ChatOptionsForm";
 			this.ShowIcon = false;
@@ -61,11 +71,11 @@
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ChatOptionsForm_FormClosing);
 			this.Load += new System.EventHandler(this.ChatOptionsForm_Load);
 			this.ResumeLayout(false);
-			this.PerformLayout();
 		}
 
 		#endregion
 
 		private Networking.Controls.LabelButton LogOutButton;
+		private Networking.Controls.LabelButton TestButton;
 	}
 }

@@ -11,10 +11,10 @@ namespace GUIClient
 	public partial class ChatForm : Form
 	{
 		[DllImport("user32.dll")]
-		static extern bool HideCaret(IntPtr hWnd);
+		private static extern bool HideCaret(IntPtr hWnd);
 
 		[DllImport("user32.dll")]
-		static extern bool ShowCaret(IntPtr hWnd);
+		private static extern bool ShowCaret(IntPtr hWnd);
 
 		#region TopBar EDITED
 		public const int WM_NCLBUTTONDOWN = 0xA1;
@@ -77,16 +77,14 @@ namespace GUIClient
 
 		private void SlidePictureBox_Click(Object sender, EventArgs e)
 		{
-			if (SlideSettingsOut)
-			{
-				ChatOptionFormInstance.Hide();
-				SlideSettingsOut = false;
-			}
-			else
-			{
-				ChatOptionFormInstance.Show(this);
-				SlideSettingsOut = true;
-			}
+			Image img = SlidePictureBox.Image;
+			img.RotateFlip(RotateFlipType.Rotate180FlipNone);
+			SlidePictureBox.Image = img;
+
+			//ChatOptionFormInstance.Controls.SetChildIndex(ChatOptionFormInstance, this.Controls.GetChildIndex(this)-1);
+
+			ChatOptionFormInstance.FormSlide(SlideSettingsOut);
+			SlideSettingsOut = !SlideSettingsOut;
 		}
 		#endregion
 
@@ -141,7 +139,8 @@ namespace GUIClient
 			InfoDockingForm.Top = this.Top + (this.Height - InfoDockingForm.Height) / 2;
 			InfoDockingForm.Show(this);
 
-            ChatOptionFormInstance = new ChatOptionsForm(this);
+			ChatOptionFormInstance = new ChatOptionsForm(this);
+			//ChatOptionFormInstance.Show(this);
 		}
 
 		private void Output_GotFocus(Object sender, EventArgs e)

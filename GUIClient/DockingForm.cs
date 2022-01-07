@@ -86,7 +86,7 @@ namespace GUIClient
 
 		#region Global Variables
 		public static ChatForm FormParent = null;
-		private bool Docked = false, DoneSettingBar = true;
+		private bool Docked = true, DoneSettingBar = true;
 		private int DockedHeight;
 		private readonly ManualResetEvent MRSE = new ManualResetEvent(false);
 		#endregion
@@ -104,6 +104,8 @@ namespace GUIClient
 			Thread DockingThread = new Thread(() => DockedThread(this));
 			DockingThread.Name = "Docking Thread";
 			DockingThread.Start();
+
+			MRSE.Set();
 		}
 
 		#region Threading And Validating

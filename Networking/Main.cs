@@ -413,6 +413,7 @@ namespace Networking.Utils
 
 namespace Networking.Controls
 {
+	[ComVisible(true)]
 	[DefaultProperty("Text")]
 	public class LabelButton : Label
 	{

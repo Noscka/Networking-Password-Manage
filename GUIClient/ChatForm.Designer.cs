@@ -94,6 +94,7 @@
 			this.Output.Multiline = true;
 			this.Output.Name = "Output";
 			this.Output.ReadOnly = true;
+			this.Output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.Output.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
 			this.Output.Size = new System.Drawing.Size(780, 360);
 			this.Output.TabIndex = 4;

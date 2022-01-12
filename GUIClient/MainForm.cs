@@ -2,6 +2,7 @@
 using Networking.Packets;
 using Networking.TCP;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -116,6 +117,11 @@ namespace GUIClient
 		/// public instance for all forms to access
 		/// </summary>
 		public static MainForm StartFormInstance = null;
+
+		/// <summary>
+		/// List of all threads that need to aborted on soft restart
+		/// </summary>
+		public static List<Thread> GlobalThreadList = new List<Thread>();
 		#endregion
 
 		private void MainForm_FormClosing(Object sender, FormClosingEventArgs e)
@@ -134,12 +140,13 @@ namespace GUIClient
 
 			//Create second thread to connect to server so it doesn't freeze the gui
 			Thread TPCConnectionThread = new Thread(() => ConnectToServer(this));
+			TPCConnectionThread.Name = "Server Connection Thread";
 			TPCConnectionThread.IsBackground = true;
 			TPCConnectionThread.Start();
 
-			ChatForm ChatForm = new ChatForm(this);
-			ChatForm.Show();
-			this.Hide();
+			//ChatForm ChatForm = new ChatForm(this);
+			//ChatForm.Show();
+			//this.Hide();
 		}
 
 		#region SignIn/Up logic
@@ -358,20 +365,29 @@ namespace GUIClient
 					break;
 
 				case SRReasons.srReasons.LogOut:
-					//MainForm.TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.LogOut));
+					MainForm.TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.LogOut));
 					break;
 			}
 
 			NextForm = false;
 
+			for (int i = GlobalThreadList.Count - 1; i >= 0; i--)
+			{
+				try
+				{
+					GlobalThreadList[i].Abort();
+					GlobalThreadList.RemoveAt(i);
+				}
+				catch { }
+			}
+
 			FormCollection fc = Application.OpenForms;
 
-			foreach (Form frm in fc)
+			for (int i = fc.Count - 1; i >= 0; i--)
 			{
-				if (frm != this)
+				if (fc[i] != this)
 				{
-					frm.Dispose();
-					frm.Close();
+					fc[i].Dispose();
 				}
 			}
 

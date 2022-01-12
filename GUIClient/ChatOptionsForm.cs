@@ -44,6 +44,8 @@ namespace GUIClient
 		private void ChatOptionsForm_Load(Object sender, EventArgs e)
 		{
 			Thread ChatOptionsDockingThread = new Thread(() => DockedThread(this));
+			MainForm.GlobalThreadList.Add(ChatOptionsDockingThread);
+			ChatOptionsDockingThread.Name = "Chat Options Docking Thread";
 			ChatOptionsDockingThread.IsBackground = true;
 			ChatOptionsDockingThread.Start();
 

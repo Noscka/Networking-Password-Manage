@@ -1,16 +1,14 @@
 ﻿using Networking.ObjectStream;
 using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
-using System.Drawing;
-using System.ComponentModel;
-
 
 namespace Networking.Packets
 {

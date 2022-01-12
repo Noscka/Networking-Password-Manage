@@ -33,6 +33,7 @@ namespace GUIClient
 			if (e.Button == MouseButtons.Left)
 			{
 				Thread DockinBarThread = new Thread(() => DockingBar(this));
+				MainForm.GlobalThreadList.Add(DockinBarThread);
 				DockinBarThread.Name = "Docking Bar Thread";
 				DockinBarThread.IsBackground = true;
 				DockinBarThread.Start();
@@ -103,7 +104,8 @@ namespace GUIClient
 			UsernameLabel.Text = $"Username: {MainForm.CurrentUser.Username}";
 
 			Thread DockingThread = new Thread(() => DockedThread(this));
-			DockingThread.Name = "Docking Thread";
+			MainForm.GlobalThreadList.Add(DockingThread);
+			DockingThread.Name = "Form Docking Thread";
 			DockingThread.IsBackground = true;
 			DockingThread.Start();
 

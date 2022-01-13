@@ -2,3 +2,4 @@
 
 (Fail due to private)
 # Networking Password Manager
+A project to test object sending over network as a main communication method, Encryption of streams using TLS and asymmetric encryption, password hashing with key stretching.

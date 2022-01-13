@@ -1,6 +1,5 @@
-﻿using Networking.ObjectStream;
+﻿using Networking.CustomNetObjects;
 using Networking.Packets;
-using Networking.TCP;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -355,7 +354,7 @@ namespace GUIClient
 			}
 		}
 		#endregion
-		
+
 		#region Functions
 		public void SoftRestart(SRReasons.srReasons RestartReason)
 		{
@@ -391,7 +390,7 @@ namespace GUIClient
 				}
 			}
 
-		this.Show();
+			this.Show();
 		}
 
 		#endregion

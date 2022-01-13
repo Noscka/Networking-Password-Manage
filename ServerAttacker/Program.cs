@@ -4,8 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Networking.ObjectStream;
-using Networking.TCP;
+using Networking.CustomNetObjects;
 using Networking.Packets;
 using System.Runtime.Serialization.Formatters.Binary;
 

@@ -1,54 +1,51 @@
-﻿using System;
-using System.Text;
-using System.Net.Sockets;
-using System.Threading;
-using Networking.ObjectStream;
-using Networking.TCP;
-using Networking.Packets;
-using System.Runtime.Serialization.Formatters.Binary;
+﻿using Networking.CustomNetObjects;
+using System;
 using System.Collections;
 using System.Net;
 using System.Net.Security;
-using System.Security.Authentication;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography.X509Certificates;
-using System.IO;
+using System.Text;
 
 
 namespace ClientTest
 {
 	internal class Program
 	{
-		private static Hashtable certificateErrors = new Hashtable();
-
 		private static BinaryFormatter _bFormatter = new BinaryFormatter();
 
 		// The following method is invoked by the RemoteCertificateValidationDelegate.
-		public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain,SslPolicyErrors sslPolicyErrors)
 		{
 			if (sslPolicyErrors == SslPolicyErrors.None)
+			{
 				return true;
+			}
 
 			Console.WriteLine("Certificate error: {0}", sslPolicyErrors);
 
-			// Do not allow this client to communicate with unauthenticated servers.
+			// refuse connection
 			return false;
 		}
 
 		static void Main(string[] args)
 		{
-			ObjectTcpClient tcpClient = new ObjectTcpClient("127.0.0.1", 6096);
+			ObjectTcpClient tcpClient = new ObjectTcpClient(IPAddress.Loopback.ToString(), 6096);
 
-			SslStream stream = new SslStream(tcpClient.GetStream(), false,new RemoteCertificateValidationCallback(ValidateServerCertificate),null);
+			Console.WriteLine("Client Connected");
 
-			stream.AuthenticateAsClient("Asshat");
+			SslStream sslStream = new SslStream(tcpClient.GetStream(),false,new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+
+			sslStream.AuthenticateAsClient("SERVERWAR");
 
 			while (true)
 			{
 				//stream.Write(new RequestPacket(NetworkOperationTypes.SignUp, "cunt", "bitch"));
 
-				Byte[] Send = Encoding.Unicode.GetBytes("cunt someshit");
+				Byte[] Send = Encoding.ASCII.GetBytes("gdsgds");
 
-				stream.Write(Send, 0, Send.Length);
+				sslStream.Write(Send, 0, Send.Length);
+				//sslStream.Flush();
 
 				Console.ReadLine();
 			}

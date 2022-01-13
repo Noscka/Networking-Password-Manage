@@ -1,9 +1,9 @@
-﻿using Networking.ObjectStream;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -240,7 +240,7 @@ namespace Networking.Packets
 	}
 }
 
-namespace Networking.ObjectStream
+namespace Networking.CustomNetObjects
 {
 	/// <summary>
 	/// Custom Network stream with object sending ablities
@@ -271,10 +271,23 @@ namespace Networking.ObjectStream
 			_bFormatter.Serialize(this, ObjectToSend);
 		}
 	}
-}
 
-namespace Networking.TCP
-{
+	/// <summary>
+	/// Custom SSL Stream object that allows for using objects over network
+	/// </summary>
+	public class ObjectSSLStream : SslStream
+	{
+		public ObjectSSLStream(Stream innerStream) : base(innerStream) { }
+
+		public ObjectSSLStream(Stream innerStream, Boolean leaveInnerStreamOpen) : base(innerStream, leaveInnerStreamOpen) { }
+
+		public ObjectSSLStream(Stream innerStream, Boolean leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback) : base(innerStream, leaveInnerStreamOpen, userCertificateValidationCallback) { }
+
+		public ObjectSSLStream(Stream innerStream, Boolean leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback) : base(innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, userCertificateSelectionCallback) { }
+
+		public ObjectSSLStream(Stream innerStream, Boolean leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback, EncryptionPolicy encryptionPolicy) : base(innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, userCertificateSelectionCallback, encryptionPolicy) { }
+	}
+
 	/// <summary>
 	/// Custom TCP Client Object with network stream compatibility
 	/// </summary>

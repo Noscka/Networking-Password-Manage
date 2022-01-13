@@ -1,6 +1,4 @@
-﻿using Networking.Packets;
-using System;
-using System.Drawing;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -109,7 +107,7 @@ namespace GUIClient
 				Distance += 10;
 			}
 		}
-		
+
 		private void SlideOutTimerFunctinon(Object sender, EventArgs e)
 		{
 			if (Distance <= -this.Width)
@@ -151,7 +149,7 @@ namespace GUIClient
 		{
 			MainForm.StartFormInstance.SoftRestart(SRReasons.srReasons.LogOut);
 		}
-		
+
 		private void TestButton_Click(Object sender, EventArgs e)
 		{
 			//this.Region = new Region(new Rectangle(0, 0, this.Width, this.Height));

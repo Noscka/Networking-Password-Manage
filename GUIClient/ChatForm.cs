@@ -1,4 +1,4 @@
-﻿using Networking.ObjectStream;
+﻿using Networking.CustomNetObjects;
 using Networking.Packets;
 using System;
 using System.Drawing;

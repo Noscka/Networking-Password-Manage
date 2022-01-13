@@ -1,6 +1,6 @@
-﻿using Networking.ObjectStream;
+﻿using Networking.CustomNetObjects;
 using Networking.Packets;
-using Networking.TCP;
+using Networking.CustomNetObjects;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

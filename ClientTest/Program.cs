@@ -1,6 +1,5 @@
 ﻿using Networking.CustomNetObjects;
 using System;
-using System.Collections;
 using System.Net;
 using System.Net.Security;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -15,7 +14,7 @@ namespace ClientTest
 		private static BinaryFormatter _bFormatter = new BinaryFormatter();
 
 		// The following method is invoked by the RemoteCertificateValidationDelegate.
-		public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain,SslPolicyErrors sslPolicyErrors)
+		public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
 			if (sslPolicyErrors == SslPolicyErrors.None)
 			{
@@ -34,7 +33,7 @@ namespace ClientTest
 
 			Console.WriteLine("Client Connected");
 
-			SslStream sslStream = new SslStream(tcpClient.GetStream(),false,new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+			SslStream sslStream = new SslStream(tcpClient.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
 
 			sslStream.AuthenticateAsClient("SERVERWAR");
 

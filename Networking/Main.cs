@@ -43,11 +43,11 @@ namespace Networking.Packets
 		}
 
 		public enum Field : UInt16
-        {
+		{
 			username = 0,
 			password = 1,
 			both = 2,
-        }
+		}
 	}
 
 	/// <summary>

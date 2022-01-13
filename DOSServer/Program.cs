@@ -123,27 +123,45 @@ namespace DOSServer
 
 							bool found = false;
 
-							foreach (User userInList in User.UserArray)
-							{
-								if (userInList.name == Received.Username)
-								{
-									response = new ResponsePacket(NetworkReponse.ResponseCodes.UserExists, NetworkOperationTypes.SignUp);
-									found = true;
-									break;
-								}
+							if(String.IsNullOrEmpty(Received.Username) && String.IsNullOrEmpty(Received.Password))
+                            {
+								response = new ResponsePacket(NetworkReponse.ResponseCodes.NullOrEmpty, NetworkReponse.Field.both, NetworkOperationTypes.SignUp);
+								break;
+                            }
+							else if (String.IsNullOrEmpty(Received.Username))
+                            {
+								response = new ResponsePacket(NetworkReponse.ResponseCodes.NullOrEmpty, NetworkReponse.Field.username, NetworkOperationTypes.SignUp);
+								break;
 							}
+							else if (String.IsNullOrEmpty(Received.Password))
+                            {
+								response = new ResponsePacket(NetworkReponse.ResponseCodes.NullOrEmpty, NetworkReponse.Field.password, NetworkOperationTypes.SignUp);
+								break;
+							}
+                            else
+                            {
+								foreach (User userInList in User.UserArray)
+								{
+									if (userInList.name == Received.Username)
+									{
+										response = new ResponsePacket(NetworkReponse.ResponseCodes.UserExists, NetworkOperationTypes.SignUp);
+										found = true;
+										break;
+									}
+								}
 
-							if (!found)
-							{
-								CurrentUser = new User(Client, Received.Username, PasswordHashing.CreateHash(Received.Password));
-								User.UserArray.Add(CurrentUser);
-								response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignUp, new UserInformationPack(CurrentUser.name));
-								Console.WriteLine(ConsoleLog($"New account Created: {CurrentUser.name}"));
-								ContinueSignProc = false;
+								if (!found)
+								{
+									CurrentUser = new User(Client, Received.Username, PasswordHashing.CreateHash(Received.Password));
+									User.UserArray.Add(CurrentUser);
+									response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignUp, new UserInformationPack(CurrentUser.name));
+									Console.WriteLine(ConsoleLog($"New account Created: {CurrentUser.name}"));
+									ContinueSignProc = false;
 
-								#region Update Store
-								File.WriteAllText(UserDataStore, JsonConvert.SerializeObject(User.UserArray));
-								#endregion
+									#region Update Store
+									File.WriteAllText(UserDataStore, JsonConvert.SerializeObject(User.UserArray));
+									#endregion
+								}
 							}
 							break;
 					}

@@ -39,7 +39,15 @@ namespace Networking.Packets
 			UserExists = 3, // username already exists (sign up only)
 			AlreadyLogged = 4, // Already logged in to an account (both)
 			MessageSend = 5, // sending message to user
+			NullOrEmpty = 6,
 		}
+
+		public enum Field : UInt16
+        {
+			username = 0,
+			password = 1,
+			both = 2,
+        }
 	}
 
 	/// <summary>
@@ -125,6 +133,11 @@ namespace Networking.Packets
 		public NetworkReponse.ResponseCodes Response { get; set; }
 
 		/// <summary>
+		/// Field that is being described
+		/// </summary>
+		public NetworkReponse.Field EntryField { get; set; }
+
+		/// <summary>
 		/// Operation being responded to (incase it is needed in a function)
 		/// </summary>
 		public NetworkOperationTypes ReponseOperation { get; set; }
@@ -149,6 +162,19 @@ namespace Networking.Packets
 		public ResponsePacket(NetworkReponse.ResponseCodes response, NetworkOperationTypes ResponseOp)
 		{
 			Response = response;
+			ReponseOperation = ResponseOp;
+		}
+
+		/// <summary>
+		/// Response with a specified field
+		/// </summary>
+		/// <param name="response">response type</param>
+		/// <param name="ErrorField">Specified Field</param>
+		/// <param name="ResponseOp">Request that was being responded to</param>
+		public ResponsePacket(NetworkReponse.ResponseCodes response, NetworkReponse.Field ErrorField, NetworkOperationTypes ResponseOp)
+		{
+			Response = response;
+			EntryField = ErrorField;
 			ReponseOperation = ResponseOp;
 		}
 

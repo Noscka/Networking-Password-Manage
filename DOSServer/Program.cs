@@ -30,7 +30,7 @@ namespace DOSServer
 		private static readonly BinaryFormatter _bFormatter = new BinaryFormatter();
 
 		/// Server Certificate
-		private static X509Certificate2 serverCertificate = new X509Certificate2("certificate.p12");
+		private static X509Certificate2 serverCertificate = new X509Certificate2("../../certificate.p12");
 		#endregion
 
 		static void Main(string[] args)

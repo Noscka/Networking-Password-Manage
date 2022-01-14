@@ -230,7 +230,7 @@ namespace Networking.Packets
 		public UserInformationPack() { }
 
 		/// <summary>
-		/// Basic UserInformationPack
+		/// Username Limited UserInformationPack
 		/// </summary>
 		/// <param name="username">Client's username</param>
 		public UserInformationPack(String username)
@@ -277,6 +277,7 @@ namespace Networking.CustomNetObjects
 	/// </summary>
 	public class ObjectSSLStream : SslStream
 	{
+		private readonly BinaryFormatter _bFormatter = new BinaryFormatter();
 		public ObjectSSLStream(Stream innerStream) : base(innerStream) { }
 
 		public ObjectSSLStream(Stream innerStream, Boolean leaveInnerStreamOpen) : base(innerStream, leaveInnerStreamOpen) { }
@@ -286,6 +287,15 @@ namespace Networking.CustomNetObjects
 		public ObjectSSLStream(Stream innerStream, Boolean leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback) : base(innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, userCertificateSelectionCallback) { }
 
 		public ObjectSSLStream(Stream innerStream, Boolean leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback, EncryptionPolicy encryptionPolicy) : base(innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, userCertificateSelectionCallback, encryptionPolicy) { }
+
+		/// <summary>
+		/// Send Object over network
+		/// </summary>
+		/// <param name="ObjectToSend">Send Object Over Network</param>
+		public void Write(Object ObjectToSend)
+		{
+			_bFormatter.Serialize(this, ObjectToSend);
+		}
 	}
 
 	/// <summary>

@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
+using System.Net.Security;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -100,7 +102,7 @@ namespace GUIClient
 		/// <summary>
 		///  Global Network Stream
 		/// </summary>
-		public static ObjectNetworkStream TCPNetworkStream { get; set; }
+		public static ObjectSSLStream SSLTCPNetworkStream { get; set; }
 
 		/// <summary>
 		/// Global User Information
@@ -251,8 +253,8 @@ namespace GUIClient
 				CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = "Logging In\nMight take a sec"; });
 
 				// write object to server
-				TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.SignIn, Username, Password));
-				Received = (ResponsePacket)_bFormatter.Deserialize(TCPNetworkStream);
+				SSLTCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.SignIn, Username, Password));
+				Received = (ResponsePacket)_bFormatter.Deserialize(SSLTCPNetworkStream);
 				switch (Received.Response)
 				{
 					case NetworkReponse.ResponseCodes.successful:
@@ -274,10 +276,10 @@ namespace GUIClient
 				CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate { CurrentForm.ErrorInfoLogin.Text = "Creating Account\nMight take a sec"; });
 
 				//write object to server
-				TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.SignUp, Username, Password));
+				SSLTCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.SignUp, Username, Password));
 
 				// get response back
-				Received = (ResponsePacket)_bFormatter.Deserialize(TCPNetworkStream);
+				Received = (ResponsePacket)_bFormatter.Deserialize(SSLTCPNetworkStream);
 
 				// switch for response codes
 				switch (Received.Response)
@@ -315,7 +317,8 @@ namespace GUIClient
 				{
 					// Try to connect to server
 					TCPClient.Connect(Dns.GetHostAddresses("192.168.1.109"), 6096);
-					TCPNetworkStream = TCPClient.GetStream();
+					SSLTCPNetworkStream = new ObjectSSLStream(TCPClient.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+					SSLTCPNetworkStream.AuthenticateAsClient("SERVERWAR");
 
 					// if connects shows message saying it has for 2 seconds
 					CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate
@@ -345,6 +348,15 @@ namespace GUIClient
 						});
 						Thread.Sleep(2000);
 					}
+					else if (ex is System.Security.Authentication.AuthenticationException)
+					{
+						CurrentForm.ErrorInfoLogin.Invoke((MethodInvoker)delegate
+						{
+							CurrentForm.ErrorInfoLogin.Text = "Server Authentication Failed\nTrying again 10 seconds";
+							CurrentForm.ErrorInfoLogin.Visible = true;
+						});
+						Thread.Sleep(10000);
+					}
 					else
 					{
 						// throw incase new unaccounted error
@@ -364,7 +376,7 @@ namespace GUIClient
 					break;
 
 				case SRReasons.srReasons.LogOut:
-					MainForm.TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.LogOut));
+					MainForm.SSLTCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.LogOut));
 					break;
 			}
 
@@ -393,6 +405,18 @@ namespace GUIClient
 			this.Show();
 		}
 
+		public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		{
+			if (sslPolicyErrors == SslPolicyErrors.None)
+			{
+				return true;
+			}
+
+			Console.WriteLine("Certificate error: {0}", sslPolicyErrors);
+
+			// refuse connection
+			return false;
+		}
 		#endregion
 	}
 }

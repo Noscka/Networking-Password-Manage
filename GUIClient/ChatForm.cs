@@ -131,7 +131,7 @@ namespace GUIClient
 		}
 		private void Form2_Load(Object sender, EventArgs e)
 		{
-			Thread TCPListenThread = new Thread(() => ListenThread(MainForm.TCPNetworkStream, this));
+			Thread TCPListenThread = new Thread(() => ListenThread(MainForm.SSLTCPNetworkStream, this));
 			MainForm.GlobalThreadList.Add(TCPListenThread);
 			TCPListenThread.Name = "Listen Thread";
 			TCPListenThread.IsBackground = true;
@@ -173,7 +173,7 @@ namespace GUIClient
 		{
 			if (e.KeyCode == Keys.Enter)
 			{
-				MainForm.TCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.Message, Input.Text));
+				MainForm.SSLTCPNetworkStream.Write(new RequestPacket(NetworkOperationTypes.Message, Input.Text));
 
 				Input.Text = "";
 
@@ -183,7 +183,7 @@ namespace GUIClient
 		}
 
 		#region Threading
-		private static void ListenThread(ObjectNetworkStream ListenStream, ChatForm CurrentForm)
+		private static void ListenThread(ObjectSSLStream ListenStream, ChatForm CurrentForm)
 		{
 			while (true)
 			{

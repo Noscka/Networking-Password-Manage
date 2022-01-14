@@ -1,16 +1,16 @@
 ﻿using Networking.CustomNetObjects;
 using Networking.Packets;
-using Networking.CustomNetObjects;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Authentication;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net.Sockets;
 
 namespace DOSServer
 {
@@ -28,6 +28,9 @@ namespace DOSServer
 		public static IPEndPoint ServerIpEndPoint = new IPEndPoint(IPAddress.Any, 6096);
 		public static ObjectTcpListener ServerTCPListener = new ObjectTcpListener(ServerIpEndPoint);
 		private static readonly BinaryFormatter _bFormatter = new BinaryFormatter();
+
+		/// Server Certificate
+		private static X509Certificate2 serverCertificate = new X509Certificate2("certificate.p12");
 		#endregion
 
 		static void Main(string[] args)
@@ -76,10 +79,13 @@ namespace DOSServer
 		private static void HandleNewTCPClient(ObjectTcpClient Client)
 		{
 			User CurrentUser = new User();
+			ObjectSSLStream ClientNetworkStream = null;
+
 
 			try
 			{
-				ObjectNetworkStream ClientNetworkStream = Client.GetStream();
+				ClientNetworkStream = new ObjectSSLStream(Client.GetStream(), false);
+				ClientNetworkStream.AuthenticateAsServer(serverCertificate, false, SslProtocols.Tls, true);
 
 			RestartLogging:
 				bool ContinueSignProc = true;
@@ -105,7 +111,7 @@ namespace DOSServer
 									if (PasswordHashing.ValidatePassword(Received.Password, userInList.password))
 									{
 										CurrentUser = userInList;
-										CurrentUser.tcpClient = Client;
+										CurrentUser.SSLTCPClientStream = ClientNetworkStream;
 										response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignIn, new UserInformationPack(CurrentUser.name));
 										Console.WriteLine(ConsoleLog($"{CurrentUser.name} Has logged in"));
 										ContinueSignProc = false;
@@ -123,23 +129,23 @@ namespace DOSServer
 
 							bool found = false;
 
-							if(String.IsNullOrEmpty(Received.Username) && String.IsNullOrEmpty(Received.Password))
-                            {
+							if (String.IsNullOrEmpty(Received.Username) && String.IsNullOrEmpty(Received.Password))
+							{
 								response = new ResponsePacket(NetworkReponse.ResponseCodes.NullOrEmpty, NetworkReponse.Field.both, NetworkOperationTypes.SignUp);
 								break;
-                            }
+							}
 							else if (String.IsNullOrEmpty(Received.Username))
-                            {
+							{
 								response = new ResponsePacket(NetworkReponse.ResponseCodes.NullOrEmpty, NetworkReponse.Field.username, NetworkOperationTypes.SignUp);
 								break;
 							}
 							else if (String.IsNullOrEmpty(Received.Password))
-                            {
+							{
 								response = new ResponsePacket(NetworkReponse.ResponseCodes.NullOrEmpty, NetworkReponse.Field.password, NetworkOperationTypes.SignUp);
 								break;
 							}
-                            else
-                            {
+							else
+							{
 								foreach (User userInList in User.UserArray)
 								{
 									if (userInList.name == Received.Username)
@@ -152,7 +158,7 @@ namespace DOSServer
 
 								if (!found)
 								{
-									CurrentUser = new User(Client, Received.Username, PasswordHashing.CreateHash(Received.Password));
+									CurrentUser = new User(ClientNetworkStream, Received.Username, PasswordHashing.CreateHash(Received.Password));
 									User.UserArray.Add(CurrentUser);
 									response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignUp, new UserInformationPack(CurrentUser.name));
 									Console.WriteLine(ConsoleLog($"New account Created: {CurrentUser.name}"));
@@ -194,11 +200,14 @@ namespace DOSServer
 			}
 			catch (System.IO.IOException)
 			{
-				CurrentUser.tcpClient = null;
+				ClientNetworkStream.Dispose();
+
+				CurrentUser.SSLTCPClientStream = null;
 				Console.WriteLine(ConsoleLog("Connection Ended"));
 				User.TotalUsers--;
 				UpdateTitle();
 				User.SendAll($"\"{CurrentUser.name}\" Left");
+
 				return;
 			}
 		}
@@ -279,7 +288,7 @@ namespace DOSServer
 	{
 		public const int SALT_BYTE_SIZE = 40;
 		public const int HASH_BYTE_SIZE = 50;
-		public const int PBKDF2_ITERATIONS = 1000000;
+		public const int PBKDF2_ITERATIONS = 10000;
 
 		public const int ITERATION_INDEX = 0;
 		public const int SALT_INDEX = 1;
@@ -380,9 +389,9 @@ namespace DOSServer
 		{
 			foreach (User user in UserArray) // go through all users
 			{
-				if (user.tcpClient != null) // only send if the tcpClient object instance isn't null
+				if (user.SSLTCPClientStream != null) // only send if the tcpClient object instance isn't null
 				{
-					user.tcpClient.GetStream().Write(new ResponsePacket(NetworkReponse.ResponseCodes.MessageSend, message));
+					user.SSLTCPClientStream.Write(new ResponsePacket(NetworkReponse.ResponseCodes.MessageSend, message));
 				}
 			}
 		}
@@ -391,7 +400,7 @@ namespace DOSServer
 		public String password { get; set; }
 
 		[JsonIgnore]
-		public ObjectTcpClient tcpClient { get; set; }
+		public ObjectSSLStream SSLTCPClientStream { get; set; }
 
 		/// <summary>
 		/// Empty User Object
@@ -414,12 +423,12 @@ namespace DOSServer
 		/// <summary>
 		/// Create username with Name and Password Plus TCPclient Instance
 		/// </summary>
-		/// <param name="TCPClient">TCPclient instance</param>
+		/// <param name="SSLTCPClientStream">ObjectSSLStream Instance</param>
 		/// <param name="Name">Username</param>
 		/// <param name="Password">User Password</param>
-		public User(ObjectTcpClient TCPClient, String Name, String Password)
+		public User(ObjectSSLStream SSLTCPclientstream, String Name, String Password)
 		{
-			tcpClient = TCPClient;
+			SSLTCPClientStream = SSLTCPclientstream;
 			name = Name;
 			password = Password;
 		}

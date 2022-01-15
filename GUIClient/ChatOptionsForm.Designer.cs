@@ -29,16 +29,16 @@
 		private void InitializeComponent()
 		{
 			this.LogOutButton = new Networking.Controls.LabelButton();
-			this.TestButton = new Networking.Controls.LabelButton();
+			this.ProfileSettingsButton = new Networking.Controls.LabelButton();
 			this.SuspendLayout();
 			//
 			// TestButton
 			//
-			this.TestButton.Text = "Test Button";
-			this.TestButton.Name = "TestButton";
-			this.TestButton.Location = new System.Drawing.Point(48, 380);
-			this.TestButton.Size = new System.Drawing.Size(124, 25);
-			this.TestButton.Click += new System.EventHandler(TestButton_Click);
+			this.ProfileSettingsButton.Text = "Profile";
+			this.ProfileSettingsButton.Name = "ProfileSettingsButton";
+			this.ProfileSettingsButton.Location = new System.Drawing.Point(48, 380);
+			this.ProfileSettingsButton.Size = new System.Drawing.Size(124, 25);
+			this.ProfileSettingsButton.Click += new System.EventHandler(ProfileSettingsButton_Click);
 			// 
 			// LogOutButton
 			// 
@@ -62,7 +62,7 @@
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(7)))), ((int)(((byte)(7)))), ((int)(((byte)(7)))));
 			this.ClientSize = new System.Drawing.Size(220, 450);
 			this.Controls.Add(this.LogOutButton);
-			this.Controls.Add(this.TestButton);
+			this.Controls.Add(this.ProfileSettingsButton);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Name = "ChatOptionsForm";
 			this.ShowIcon = false;
@@ -76,6 +76,6 @@
 		#endregion
 
 		private Networking.Controls.LabelButton LogOutButton;
-		private Networking.Controls.LabelButton TestButton;
+		private Networking.Controls.LabelButton ProfileSettingsButton;
 	}
 }

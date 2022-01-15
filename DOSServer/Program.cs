@@ -81,7 +81,6 @@ namespace DOSServer
 			User CurrentUser = new User();
 			ObjectSSLStream ClientNetworkStream = null;
 
-
 			try
 			{
 				ClientNetworkStream = new ObjectSSLStream(Client.GetStream(), false);
@@ -90,36 +89,60 @@ namespace DOSServer
 			RestartLogging:
 				bool ContinueSignProc = true;
 				RequestPacket Received;
+				ResponsePacket response = new ResponsePacket();
 
 				// loops till currect user is set
 				while (ContinueSignProc)
 				{
 					Received = (RequestPacket)_bFormatter.Deserialize(ClientNetworkStream);
+					response = new ResponsePacket();
 
-					ResponsePacket response = new ResponsePacket();
+					Console.WriteLine(ConsoleLog($"Receiving Message from {Client.Client.RemoteEndPoint}"));
 
 					switch (Received.RequestedOperationType)
 					{
 						case NetworkOperationTypes.SignIn:
-
-							response = new ResponsePacket(NetworkReponse.ResponseCodes.NotFound, NetworkOperationTypes.SignIn);
-
-							foreach (User userInList in User.UserArray)
+							if (String.IsNullOrEmpty(Received.Username) && String.IsNullOrEmpty(Received.Password))
 							{
-								if (userInList.name == Received.Username)
+								response = new ResponsePacket(NetworkReponse.ResponseCodes.NullOrEmpty, NetworkReponse.Field.both, NetworkOperationTypes.SignIn);
+								Console.WriteLine(ConsoleLog($"{Client.Client.RemoteEndPoint} Input null username and password"));
+								break;
+							}
+							else if (String.IsNullOrEmpty(Received.Username))
+							{
+								response = new ResponsePacket(NetworkReponse.ResponseCodes.NullOrEmpty, NetworkReponse.Field.username, NetworkOperationTypes.SignIn);
+								Console.WriteLine(ConsoleLog($"{Client.Client.RemoteEndPoint} Input null username"));
+								break;
+							}
+							else if (String.IsNullOrEmpty(Received.Password))
+							{
+								response = new ResponsePacket(NetworkReponse.ResponseCodes.NullOrEmpty, NetworkReponse.Field.password, NetworkOperationTypes.SignIn);
+								Console.WriteLine(ConsoleLog($"{Client.Client.RemoteEndPoint} Input null password"));
+								break;
+							}
+							else
+							{
+								response = new ResponsePacket(NetworkReponse.ResponseCodes.NotFound, NetworkOperationTypes.SignIn);
+
+								foreach (User userInList in User.UserArray)
 								{
-									if (PasswordHashing.ValidatePassword(Received.Password, userInList.password))
+									if (userInList.name == Received.Username)
 									{
-										CurrentUser = userInList;
-										CurrentUser.SSLTCPClientStream = ClientNetworkStream;
-										response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignIn, new UserInformationPack(CurrentUser.name));
-										Console.WriteLine(ConsoleLog($"{CurrentUser.name} Has logged in"));
-										ContinueSignProc = false;
-										break;
-									}
-									else
-									{
-										response = new ResponsePacket(NetworkReponse.ResponseCodes.WrongPass, NetworkOperationTypes.SignIn);
+											if (PasswordHashing.ValidatePassword(Received.Password, userInList.password))
+											{
+												CurrentUser = userInList;
+												CurrentUser.online = true;
+												CurrentUser.SSLTCPClientStream = ClientNetworkStream;
+												response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignIn, new UserInformationPack(CurrentUser.name));
+												Console.WriteLine(ConsoleLog($"{CurrentUser.name} Has logged in"));
+												ContinueSignProc = false;
+												break;
+											}
+											else
+											{
+												response = new ResponsePacket(NetworkReponse.ResponseCodes.WrongPass, NetworkOperationTypes.SignIn);
+												Console.WriteLine(ConsoleLog($"Someone tried to log in as {Received.Username}"));
+											}
 									}
 								}
 							}
@@ -128,20 +151,28 @@ namespace DOSServer
 						case NetworkOperationTypes.SignUp:
 
 							bool found = false;
-
 							if (String.IsNullOrEmpty(Received.Username) && String.IsNullOrEmpty(Received.Password))
 							{
 								response = new ResponsePacket(NetworkReponse.ResponseCodes.NullOrEmpty, NetworkReponse.Field.both, NetworkOperationTypes.SignUp);
+								Console.WriteLine(ConsoleLog($"{Client.Client.RemoteEndPoint} Input null username and password"));
 								break;
 							}
 							else if (String.IsNullOrEmpty(Received.Username))
 							{
 								response = new ResponsePacket(NetworkReponse.ResponseCodes.NullOrEmpty, NetworkReponse.Field.username, NetworkOperationTypes.SignUp);
+								Console.WriteLine(ConsoleLog($"{Client.Client.RemoteEndPoint} Input null username"));
 								break;
 							}
 							else if (String.IsNullOrEmpty(Received.Password))
 							{
 								response = new ResponsePacket(NetworkReponse.ResponseCodes.NullOrEmpty, NetworkReponse.Field.password, NetworkOperationTypes.SignUp);
+								Console.WriteLine(ConsoleLog($"{Client.Client.RemoteEndPoint} Input null password"));
+								break;
+							}
+							else if (Received.Username.Length > 30 || Received.Password.Length > 150)
+							{
+								response = new ResponsePacket(NetworkReponse.ResponseCodes.InputTooLong, NetworkOperationTypes.SignUp);
+								Console.WriteLine(ConsoleLog($"{Client.Client.RemoteEndPoint} Input username that was longer then 30 or password that was longer then 150"));
 								break;
 							}
 							else
@@ -159,6 +190,7 @@ namespace DOSServer
 								if (!found)
 								{
 									CurrentUser = new User(ClientNetworkStream, Received.Username, PasswordHashing.CreateHash(Received.Password));
+									CurrentUser.online = true;
 									User.UserArray.Add(CurrentUser);
 									response = new ResponsePacket(NetworkReponse.ResponseCodes.successful, NetworkOperationTypes.SignUp, new UserInformationPack(CurrentUser.name));
 									Console.WriteLine(ConsoleLog($"New account Created: {CurrentUser.name}"));
@@ -170,10 +202,15 @@ namespace DOSServer
 								}
 							}
 							break;
+
+						case NetworkOperationTypes.Message:
+						case NetworkOperationTypes.LogOut:
+							response = new ResponsePacket(NetworkReponse.ResponseCodes.InvalidOperation, Received.RequestedOperationType);
+							Console.WriteLine(ConsoleLog($"{Client.Client.RemoteEndPoint} tried to {Received.RequestedOperationType} at first stage"));
+							break;
 					}
 					ClientNetworkStream.Write(response);
 				}
-
 
 				while (true)
 				{
@@ -186,6 +223,7 @@ namespace DOSServer
 							ClientNetworkStream.Write(new ResponsePacket(NetworkReponse.ResponseCodes.AlreadyLogged, Received.RequestedOperationType, $"Already Logged in as {CurrentUser.name}"));
 							break;
 						case NetworkOperationTypes.LogOut:
+							CurrentUser.online = false;
 							Console.WriteLine(ConsoleLog($"{CurrentUser.name} Logged out"));
 							goto RestartLogging;
 						case NetworkOperationTypes.Message:
@@ -202,6 +240,7 @@ namespace DOSServer
 			{
 				ClientNetworkStream.Dispose();
 
+				CurrentUser.online = false;
 				CurrentUser.SSLTCPClientStream = null;
 				Console.WriteLine(ConsoleLog("Connection Ended"));
 				User.TotalUsers--;
@@ -398,6 +437,12 @@ namespace DOSServer
 
 		public String name { get; set; }
 		public String password { get; set; }
+
+		/// <summary>
+		/// if Client is currently online or not
+		/// </summary>
+		[JsonIgnore]
+		public bool online { get; set; }
 
 		[JsonIgnore]
 		public ObjectSSLStream SSLTCPClientStream { get; set; }

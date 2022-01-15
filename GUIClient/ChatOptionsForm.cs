@@ -52,12 +52,6 @@ namespace GUIClient
 			InSlideTimer.Tick += SlideInTimerFunctinon;
 			OutSlideTimer.Tick += SlideOutTimerFunctinon;
 			MRSE.Set();
-
-			//System.Drawing.Drawing2D.GraphicsPath shape = new System.Drawing.Drawing2D.GraphicsPath();
-			//shape.AddRectangle(new Rectangle(8, 40, 200, 200));
-			//this.Region = new System.Drawing.Region(shape);
-			//this.Top = (Screen.PrimaryScreen.WorkingArea.Height - 160) / 2;
-			//this.Left = Screen.PrimaryScreen.WorkingArea.Left;
 		}
 
 		private void ChatOptionsForm_FormClosing(Object sender, FormClosingEventArgs e)
@@ -150,9 +144,9 @@ namespace GUIClient
 			MainForm.StartFormInstance.SoftRestart(SRReasons.srReasons.LogOut);
 		}
 
-		private void TestButton_Click(Object sender, EventArgs e)
+		private void ProfileSettingsButton_Click(Object sender, EventArgs e)
 		{
-			//this.Region = new Region(new Rectangle(0, 0, this.Width, this.Height));
+			FormParent.ProfileSettingsPanel.Visible = !FormParent.ProfileSettingsPanel.Visible;
 		}
 	}
 }

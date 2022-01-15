@@ -31,6 +31,8 @@
 			this.Control_Bar = new System.Windows.Forms.Panel();
 			this.MinimisePictureBox = new System.Windows.Forms.PictureBox();
 			this.ExitPictureBox = new System.Windows.Forms.PictureBox();
+			this.ProfileSettingsPanel = new System.Windows.Forms.Panel();
+			this.NewOutput = new System.Windows.Forms.FlowLayoutPanel();
 			this.Output = new System.Windows.Forms.TextBox();
 			this.Input = new System.Windows.Forms.TextBox();
 			this.DockBar = new System.Windows.Forms.Panel();
@@ -82,9 +84,24 @@
 			this.ExitPictureBox.Click += new System.EventHandler(this.ExitBox_Click);
 			this.ExitPictureBox.MouseLeave += new System.EventHandler(this.ExitBox_MouseLeave);
 			this.ExitPictureBox.MouseHover += new System.EventHandler(this.ExitBox_MouseHover);
+			//
+			// ProfileSettingsPanel
+			//
+			this.ProfileSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProfileSettingsPanel.BackColor = System.Drawing.Color.White;
+			this.ProfileSettingsPanel.Visible = false;
 			// 
 			// Output
 			// 
+
+			//new
+			this.NewOutput.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+			this.NewOutput.Location = new System.Drawing.Point(10, 40);
+			this.NewOutput.Size = new System.Drawing.Size(780, 360);
+			this.NewOutput.Name = "Output";
+
+
+			//old
 			this.Output.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
 			this.Output.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.Output.Cursor = System.Windows.Forms.Cursors.Default;
@@ -145,13 +162,15 @@
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(7)))), ((int)(((byte)(7)))), ((int)(((byte)(7)))));
 			this.ClientSize = new System.Drawing.Size(800, 450);
 			this.Controls.Add(this.DockBar);
-			this.Controls.Add(this.Input);
+			this.Controls.Add(this.ProfileSettingsPanel);
+			this.Controls.Add(this.NewOutput);
 			this.Controls.Add(this.Output);
+			this.Controls.Add(this.Input);
 			this.Controls.Add(this.Control_Bar);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Name = "ChatForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "Form2";
+			this.Text = "ChatForm";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ChatForm_FormClosing);
 			this.Load += new System.EventHandler(this.Form2_Load);
 			this.Control_Bar.ResumeLayout(false);
@@ -168,6 +187,8 @@
 		private System.Windows.Forms.Panel Control_Bar;
 		private System.Windows.Forms.PictureBox MinimisePictureBox;
 		private System.Windows.Forms.PictureBox ExitPictureBox;
+		public System.Windows.Forms.Panel ProfileSettingsPanel;
+		private System.Windows.Forms.FlowLayoutPanel NewOutput;
 		private System.Windows.Forms.TextBox Output;
 		private System.Windows.Forms.TextBox Input;
 		public System.Windows.Forms.Panel DockBar;

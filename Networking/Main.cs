@@ -39,9 +39,14 @@ namespace Networking.Packets
 			UserExists = 3, // username already exists (sign up only)
 			AlreadyLogged = 4, // Already logged in to an account (both)
 			MessageSend = 5, // sending message to user
-			NullOrEmpty = 6,
+			NullOrEmpty = 6, // Username or Password field was empty or null
+			InputTooLong = 7, // Input was too long, Username longer then 30 and Password longer then 150
+			InvalidOperation = 8, // Operation can not be done at the current time
 		}
 
+		/// <summary>
+		/// Field Specific Errors
+		/// </summary>
 		public enum Field : UInt16
 		{
 			username = 0,

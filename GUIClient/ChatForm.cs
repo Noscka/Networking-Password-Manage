@@ -196,7 +196,32 @@ namespace GUIClient
 					switch (Received.Response)
 					{
 						case NetworkReponse.ResponseCodes.MessageSend:
-							CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"<{DateTime.Now.ToString("HH:mm")}> {Received.ResponseString}" + Environment.NewLine); });
+							Panel MessageContainerPanel = new Panel();
+							PictureBox ProfilePictureBox = new PictureBox();
+							Label MessageLabel = new Label();
+
+							// Profile Picture Box
+							ProfilePictureBox.Size = new Size(50, 50);
+							System.Drawing.Drawing2D.GraphicsPath gp = new System.Drawing.Drawing2D.GraphicsPath();
+							gp.AddEllipse(0, 0, ProfilePictureBox.Width - 3, ProfilePictureBox.Height - 3);
+							Region rg = new Region(gp);
+							ProfilePictureBox.Region = rg;
+							ProfilePictureBox.Image = Image.FromFile(@"D:\Users\Adam\Downloads\MEMORIEs\DSC04182.JPG");
+							ProfilePictureBox.BackgroundImageLayout = ImageLayout.Stretch;
+
+							//Message Label
+							MessageLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+							MessageLabel.ForeColor = Color.FromArgb(0, 192, 0);
+							MessageLabel.Text = Received.ResponseString;
+							MessageLabel.Location = new Point(40, 0);
+
+							//Message Container Panel
+							MessageContainerPanel.Size = new Size(780, 80);
+							MessageContainerPanel.Controls.Add(ProfilePictureBox);
+							MessageContainerPanel.Controls.Add(MessageLabel);
+
+
+							CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.NewOutput.Controls.Add(MessageContainerPanel); });
 							break;
 						//Else
 						default:

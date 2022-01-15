@@ -228,7 +228,7 @@ namespace DOSServer
 							goto RestartLogging;
 						case NetworkOperationTypes.Message:
 
-							User.SendAll($"\"{CurrentUser.name}\": {Received.Message}");
+							User.SendAll(new MessageObject(CurrentUser.name, Received.Message));
 
 							Console.WriteLine(ConsoleLog($"\"{CurrentUser.name}\": {Received.Message}"));
 							break;
@@ -245,7 +245,7 @@ namespace DOSServer
 				Console.WriteLine(ConsoleLog("Connection Ended"));
 				User.TotalUsers--;
 				UpdateTitle();
-				User.SendAll($"\"{CurrentUser.name}\" Left");
+				User.SendAll(new MessageObject($"\"{CurrentUser.name}\" Left"));
 
 				return;
 			}
@@ -424,13 +424,13 @@ namespace DOSServer
 		/// send to all function
 		/// </summary>
 		/// <param name="message">message to send</param>
-		public static void SendAll(String message)
+		public static void SendAll(MessageObject message)
 		{
 			foreach (User user in UserArray) // go through all users
 			{
 				if (user.SSLTCPClientStream != null) // only send if the tcpClient object instance isn't null
 				{
-					user.SSLTCPClientStream.Write(new ResponsePacket(NetworkReponse.ResponseCodes.MessageSend, message));
+					user.SSLTCPClientStream.Write(new ResponsePacket(message));
 				}
 			}
 		}

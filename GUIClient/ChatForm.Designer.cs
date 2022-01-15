@@ -164,7 +164,7 @@
 			this.Controls.Add(this.DockBar);
 			this.Controls.Add(this.ProfileSettingsPanel);
 			this.Controls.Add(this.NewOutput);
-			this.Controls.Add(this.Output);
+			//this.Controls.Add(this.Output);
 			this.Controls.Add(this.Input);
 			this.Controls.Add(this.Control_Bar);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

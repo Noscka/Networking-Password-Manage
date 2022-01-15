@@ -101,7 +101,20 @@ namespace GUIClient
 		}
 		public void WriteToConsole(String Message)
 		{
-			this.Output.AppendText(Message + Environment.NewLine);
+			Panel MessageContainerPanel = new Panel();
+			Label MessageLabel = new Label();
+
+			MessageLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+			MessageLabel.ForeColor = Color.FromArgb(0, 192, 0);
+			MessageLabel.Location = new Point(40, 0);
+			MessageLabel.Text = Message;
+
+			MessageContainerPanel.Size = new Size(780, 80);
+			MessageContainerPanel.Controls.Add(MessageLabel);
+
+			NewOutput.Controls.Add(MessageContainerPanel);
+
+			//this.Output.AppendText(Message + Environment.NewLine);
 		}
 
 		public void UpdateDockingBar(int Height, bool LeftRightClose)
@@ -198,6 +211,7 @@ namespace GUIClient
 						case NetworkReponse.ResponseCodes.MessageSend:
 							Panel MessageContainerPanel = new Panel();
 							PictureBox ProfilePictureBox = new PictureBox();
+							Label UsernameLabel = new Label();
 							Label MessageLabel = new Label();
 
 							// Profile Picture Box
@@ -207,21 +221,27 @@ namespace GUIClient
 							Region rg = new Region(gp);
 							ProfilePictureBox.Region = rg;
 							ProfilePictureBox.Image = Image.FromFile(@"D:\Users\Adam\Downloads\MEMORIEs\DSC04182.JPG");
-							ProfilePictureBox.BackgroundImageLayout = ImageLayout.Stretch;
+							ProfilePictureBox.BackgroundImageLayout = ImageLayout.Zoom;
+
+							//Username Label
+							UsernameLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+							UsernameLabel.ForeColor = Color.FromArgb(0, 192, 0);
+							UsernameLabel.Text = Received.MessageObject.Username;
+							UsernameLabel.Location = new Point(50, 0);
 
 							//Message Label
 							MessageLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
 							MessageLabel.ForeColor = Color.FromArgb(0, 192, 0);
-							MessageLabel.Text = Received.ResponseString;
-							MessageLabel.Location = new Point(40, 0);
+							MessageLabel.Text = Received.MessageObject.Message;
+							MessageLabel.Location = new Point(50, 30);
 
 							//Message Container Panel
 							MessageContainerPanel.Size = new Size(780, 80);
 							MessageContainerPanel.Controls.Add(ProfilePictureBox);
+							MessageContainerPanel.Controls.Add(UsernameLabel);
 							MessageContainerPanel.Controls.Add(MessageLabel);
 
-
-							CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.NewOutput.Controls.Add(MessageContainerPanel); });
+							CurrentForm.NewOutput.Invoke((MethodInvoker)delegate { CurrentForm.NewOutput.Controls.Add(MessageContainerPanel); });
 							break;
 						//Else
 						default:
@@ -230,16 +250,30 @@ namespace GUIClient
 				}
 				catch (Exception ex)
 				{
+					Panel MessageContainerPanel = new Panel();
+					Label MessageLabel = new Label();
+
+					MessageLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+					MessageLabel.ForeColor = Color.FromArgb(0, 192, 0);
+					MessageLabel.Location = new Point(40, 0);
+
+					MessageContainerPanel.Size = new Size(780, 80);
+					MessageContainerPanel.Controls.Add(MessageLabel);
+
 					if (ex is System.IO.IOException)
 					{
-						CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"({DateTime.Now}) || Connection Ended" + Environment.NewLine); });
+						MessageLabel.Text = "Connection Ended";
+						//CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"({DateTime.Now}) || Connection Ended" + Environment.NewLine); });
+						CurrentForm.NewOutput.Invoke((MethodInvoker)delegate { CurrentForm.NewOutput.Controls.Add(MessageContainerPanel); });
 						ListenStream.Close();
 						return;
 					}
 #if DEBUG
 					else if (ex is System.ArgumentNullException)
 					{
-						CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"({DateTime.Now}) || Testing Env" + Environment.NewLine); });
+						MessageLabel.Text = "Testing Env";
+						//CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.AppendText($"({DateTime.Now}) || Testing Env" + Environment.NewLine); });
+						CurrentForm.NewOutput.Invoke((MethodInvoker)delegate { CurrentForm.NewOutput.Controls.Add(MessageContainerPanel); });
 						return;
 					}
 #endif

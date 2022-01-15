@@ -153,6 +153,11 @@ namespace Networking.Packets
 		public String ResponseString { get; set; }
 
 		/// <summary>
+		/// which User is sending
+		/// </summary>
+		public MessageObject MessageObject { get; set; }
+
+		/// <summary>
 		/// Information for the client e.g. username, usercount and etc
 		/// </summary>
 		public UserInformationPack currentUser { get; set; }
@@ -197,6 +202,16 @@ namespace Networking.Packets
 		}
 
 		/// <summary>
+		/// Sending Message Object, automatically sends as "MessageSend" Response code
+		/// </summary>
+		/// <param name="messageobject">Message Object</param>
+		public ResponsePacket(MessageObject messageobject)
+		{
+			Response = NetworkReponse.ResponseCodes.MessageSend;
+			MessageObject = messageobject;
+		}
+
+		/// <summary>
 		/// Simple response with message (usually just for chat and send all)
 		/// </summary>
 		/// <param name="response">response type</param>
@@ -221,6 +236,36 @@ namespace Networking.Packets
 		}
 	}
 
+	[Serializable]
+	public class MessageObject
+	{
+		public String Username { get; set; }
+		public String Message { get; set; }
+
+		public MessageObject() { }
+
+		/// <summary>
+		/// Basic user and message sending
+		/// </summary>
+		/// <param name="user">user that is sending</param>
+		/// <param name="message">message sent</param>
+		public MessageObject(String user, String message)
+		{
+			Username = user;
+			Message = message;
+		}
+
+		/// <summary>
+		/// Sending just message incase error
+		/// </summary>
+		/// <param name="message">Whole message with error</param>
+		public MessageObject(String message)
+		{
+			Message = message;
+		}
+	}
+
+
 	/// <summary>
 	/// Information for user
 	/// </summary>
@@ -243,6 +288,8 @@ namespace Networking.Packets
 			Username = username;
 		}
 	}
+
+
 }
 
 namespace Networking.CustomNetObjects

@@ -316,7 +316,7 @@ namespace GUIClient
 				try
 				{
 					// Try to connect to server
-					TCPClient.Connect(Dns.GetHostAddresses("192.168.1.109"), 6096);
+					TCPClient.Connect(IPAddress.Loopback, 6096);
 					SSLTCPNetworkStream = new ObjectSSLStream(TCPClient.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
 					SSLTCPNetworkStream.AuthenticateAsClient("SERVERWAR");
 

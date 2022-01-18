@@ -221,7 +221,7 @@ namespace GUIClient
 							Region rg = new Region(gp);
 							ProfilePictureBox.Region = rg;
 							ProfilePictureBox.Image = Image.FromFile(@"D:\Users\Adam\Downloads\MEMORIEs\DSC04182.JPG");
-							ProfilePictureBox.BackgroundImageLayout = ImageLayout.Zoom;
+							ProfilePictureBox.SizeMode = PictureBoxSizeMode.Zoom;
 
 							//Username Label
 							UsernameLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);

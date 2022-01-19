@@ -32,8 +32,7 @@
 			this.MinimisePictureBox = new System.Windows.Forms.PictureBox();
 			this.ExitPictureBox = new System.Windows.Forms.PictureBox();
 			this.ProfileSettingsPanel = new System.Windows.Forms.Panel();
-			this.NewOutput = new System.Windows.Forms.FlowLayoutPanel();
-			this.Output = new System.Windows.Forms.TextBox();
+			this.Output = new Networking.Controls.FlowLayoutConsolePanel();
 			this.Input = new System.Windows.Forms.TextBox();
 			this.DockBar = new System.Windows.Forms.Panel();
 			this.SlidePictureBox = new System.Windows.Forms.PictureBox();
@@ -93,30 +92,15 @@
 			// 
 			// Output
 			// 
-
-			//new
-			this.NewOutput.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-			this.NewOutput.Location = new System.Drawing.Point(10, 40);
-			this.NewOutput.Size = new System.Drawing.Size(780, 360);
-			this.NewOutput.Name = "Output";
-
-
-			//old
 			this.Output.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-			this.Output.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.Output.Cursor = System.Windows.Forms.Cursors.Default;
-			this.Output.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this.Output.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
 			this.Output.Location = new System.Drawing.Point(10, 40);
-			this.Output.Multiline = true;
-			this.Output.Name = "Output";
-			this.Output.ReadOnly = true;
-			this.Output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.Output.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
 			this.Output.Size = new System.Drawing.Size(780, 360);
-			this.Output.TabIndex = 4;
-			this.Output.TabStop = false;
-			this.Output.GotFocus += new System.EventHandler(this.Output_GotFocus);
+			this.Output.Name = "Output";
+			//this.Output.AutoScroll = false;
+			this.Output.HorizontalScroll.Enabled = false;
+			this.Output.HorizontalScroll.Visible = false;
+			this.Output.HorizontalScroll.Maximum = 0;
+			this.Output.AutoScroll = true;
 			// 
 			// Input
 			// 
@@ -163,8 +147,7 @@
 			this.ClientSize = new System.Drawing.Size(800, 450);
 			this.Controls.Add(this.DockBar);
 			this.Controls.Add(this.ProfileSettingsPanel);
-			this.Controls.Add(this.NewOutput);
-			//this.Controls.Add(this.Output);
+			this.Controls.Add(this.Output);
 			this.Controls.Add(this.Input);
 			this.Controls.Add(this.Control_Bar);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -188,8 +171,7 @@
 		private System.Windows.Forms.PictureBox MinimisePictureBox;
 		private System.Windows.Forms.PictureBox ExitPictureBox;
 		public System.Windows.Forms.Panel ProfileSettingsPanel;
-		private System.Windows.Forms.FlowLayoutPanel NewOutput;
-		private System.Windows.Forms.TextBox Output;
+		private Networking.Controls.FlowLayoutConsolePanel Output;
 		private System.Windows.Forms.TextBox Input;
 		public System.Windows.Forms.Panel DockBar;
 		private System.Windows.Forms.PictureBox SlidePictureBox;

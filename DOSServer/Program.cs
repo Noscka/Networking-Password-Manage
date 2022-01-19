@@ -3,6 +3,7 @@ using Networking.Packets;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -437,6 +438,7 @@ namespace DOSServer
 
 		public String name { get; set; }
 		public String password { get; set; }
+		public Image ProfilePicture { get; set; }
 
 		/// <summary>
 		/// if Client is currently online or not
@@ -459,10 +461,11 @@ namespace DOSServer
 		/// </summary>
 		/// <param name="Name">Username</param>
 		/// <param name="Password">User Password</param>
-		public User(String Name, String Password)
+		public User(String Name, String Password, Image profilePicture = null)
 		{
 			name = Name;
 			password = Password;
+			ProfilePicture = profilePicture;
 		}
 
 		/// <summary>

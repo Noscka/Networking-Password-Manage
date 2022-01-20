@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -204,8 +205,7 @@ namespace DOSServer
 							}
 							break;
 
-						case NetworkOperationTypes.Message:
-						case NetworkOperationTypes.LogOut:
+						default:
 							response = new ResponsePacket(NetworkReponse.ResponseCodes.InvalidOperation, Received.RequestedOperationType);
 							Console.WriteLine(ConsoleLog($"{Client.Client.RemoteEndPoint} tried to {Received.RequestedOperationType} at first stage"));
 							break;
@@ -229,9 +229,16 @@ namespace DOSServer
 							goto RestartLogging;
 						case NetworkOperationTypes.Message:
 
-							User.SendAll(new MessageObject(CurrentUser.name, Received.Message));
+							User.SendAll(new MessageObject(CurrentUser.name, Received.Message, CurrentUser.ProfilePicture??Image.FromFile(@"..\..\DefaultPicture.png")));
 
 							Console.WriteLine(ConsoleLog($"\"{CurrentUser.name}\": {Received.Message}"));
+							break;
+						case NetworkOperationTypes.ProfileInformationChange:
+							CurrentUser.ProfilePicture = Received.ProfilePicture;
+							Received.ProfilePicture.Save($"{CurrentUser.name}-ProfilePicture.png");
+							CurrentUser.ProfilePicturePath = Directory.GetCurrentDirectory() + $"\\{ CurrentUser.name}-ProfilePicture.png";
+							Console.WriteLine(ConsoleLog($"{CurrentUser.name} Change Profile Picture"));
+							File.WriteAllText(UserDataStore, JsonConvert.SerializeObject(User.UserArray));
 							break;
 
 					}
@@ -279,6 +286,17 @@ namespace DOSServer
 		{
 			await WhenFileCreated(UserDataStore);
 			User.UserArray = JsonConvert.DeserializeObject<List<User>>(File.ReadAllText(UserDataStore)) ?? new List<User>() { }; // if the deserialized file isn't null use it, if not then make a new list
+			foreach(User user in User.UserArray)
+			{
+				try
+				{
+					user.ProfilePicture = Image.FromFile(user.ProfilePicturePath);
+				}
+				catch (ArgumentNullException)
+				{
+
+				}
+			}
 		}
 
 		public static Task WhenFileCreated(string path)
@@ -438,6 +456,10 @@ namespace DOSServer
 
 		public String name { get; set; }
 		public String password { get; set; }
+		public String ProfilePicturePath { get; set; }
+
+
+		[JsonIgnore]
 		public Image ProfilePicture { get; set; }
 
 		/// <summary>

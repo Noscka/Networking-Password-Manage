@@ -32,6 +32,8 @@
 			this.MinimisePictureBox = new System.Windows.Forms.PictureBox();
 			this.ExitPictureBox = new System.Windows.Forms.PictureBox();
 			this.ProfileSettingsPanel = new System.Windows.Forms.Panel();
+			this.ProfilePicturePreview = new System.Windows.Forms.PictureBox();
+			this.SubmitProfilePicture = new Networking.Controls.LabelButton();
 			this.Output = new Networking.Controls.FlowLayoutConsolePanel();
 			this.Input = new System.Windows.Forms.TextBox();
 			this.DockBar = new System.Windows.Forms.Panel();
@@ -89,6 +91,25 @@
 			this.ProfileSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ProfileSettingsPanel.BackColor = System.Drawing.Color.White;
 			this.ProfileSettingsPanel.Visible = false;
+			this.ProfileSettingsPanel.Controls.Add(this.ProfilePicturePreview);
+			this.ProfileSettingsPanel.Controls.Add(this.SubmitProfilePicture);
+			//
+			// ProfilePicturePreview
+			//
+			this.ProfilePicturePreview.Size = new System.Drawing.Size(150, 150);
+			this.ProfilePicturePreview.Location = new System.Drawing.Point(790-this.ProfilePicturePreview.Width, 10);
+			this.ProfilePicturePreview.Visible = true;
+			this.ProfilePicturePreview.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+			this.ProfilePicturePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+			this.ProfilePicturePreview.DoubleClick += new System.EventHandler(this.ProfilePicturePreview_DoubleClick);
+			// 
+			// SubmitProfilePicture
+			//
+			this.SubmitProfilePicture.Size = new System.Drawing.Size(150, 25);
+			this.SubmitProfilePicture.Location = new System.Drawing.Point(790 - this.SubmitProfilePicture.Width, this.ProfilePicturePreview.Bottom);
+			this.SubmitProfilePicture.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+			this.SubmitProfilePicture.Text = "Submit pfp";
+			this.SubmitProfilePicture.Click += new System.EventHandler(this.SubmitProfilePicture_Click);
 			// 
 			// Output
 			// 
@@ -96,7 +117,6 @@
 			this.Output.Location = new System.Drawing.Point(10, 40);
 			this.Output.Size = new System.Drawing.Size(780, 360);
 			this.Output.Name = "Output";
-			//this.Output.AutoScroll = false;
 			this.Output.HorizontalScroll.Enabled = false;
 			this.Output.HorizontalScroll.Visible = false;
 			this.Output.HorizontalScroll.Maximum = 0;
@@ -171,6 +191,8 @@
 		private System.Windows.Forms.PictureBox MinimisePictureBox;
 		private System.Windows.Forms.PictureBox ExitPictureBox;
 		public System.Windows.Forms.Panel ProfileSettingsPanel;
+		public System.Windows.Forms.PictureBox ProfilePicturePreview;
+		private Networking.Controls.LabelButton SubmitProfilePicture;
 		private Networking.Controls.FlowLayoutConsolePanel Output;
 		private System.Windows.Forms.TextBox Input;
 		public System.Windows.Forms.Panel DockBar;

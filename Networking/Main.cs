@@ -22,6 +22,7 @@ namespace Networking.Packets
         SignUp = 1,
         LogOut = 2,
         Message = 3, // Sending message
+		ProfileInformationChange = 4, // Changing Profile Picture
     }
 
     /// <summary>
@@ -91,6 +92,11 @@ namespace Networking.Packets
         /// </summary>
         public String Message { set; get; }
 
+		/// <summary>
+		/// Profile picture of the user
+		/// </summary>
+		public Image ProfilePicture { get; set; }
+
         public RequestPacket() { }
 
         /// <summary>
@@ -125,7 +131,17 @@ namespace Networking.Packets
             Username = username;
             Password = password;
         }
-    }
+
+		/// <summary>
+		/// For Profile Picture change currently
+		/// </summary>
+		/// <param name="NewProfilePicture">Image to change to</param>
+		public RequestPacket(Image NewProfilePicture)
+		{
+			RequestedOperationType = NetworkOperationTypes.ProfileInformationChange;
+			ProfilePicture = NewProfilePicture;
+		}
+	}
 
     /// <summary>
     /// Server reponse to user
@@ -677,7 +693,7 @@ namespace Networking.Controls
             gp.AddEllipse(0, 0, ProfilePictureBox.Width - 3, ProfilePictureBox.Height - 3);
             Region rg = new Region(gp);
             ProfilePictureBox.Region = rg;
-            ProfilePictureBox.Image = Image.FromFile(@"D:\Users\Adam\Downloads\MEMORIEs\DSC04182.JPG");
+            ProfilePictureBox.Image = Message.ProfilePicture;
             ProfilePictureBox.SizeMode = PictureBoxSizeMode.Zoom;
 
             //Username Label

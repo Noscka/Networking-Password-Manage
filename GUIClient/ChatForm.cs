@@ -2,6 +2,7 @@
 using Networking.Packets;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -10,11 +11,6 @@ namespace GUIClient
 {
 	public partial class ChatForm : Form
 	{
-		[DllImport("user32.dll")]
-		private static extern bool HideCaret(IntPtr hWnd);
-
-		[DllImport("user32.dll")]
-		private static extern bool ShowCaret(IntPtr hWnd);
 
 		#region TopBar EDITED
 		public const int WM_NCLBUTTONDOWN = 0xA1;
@@ -99,6 +95,11 @@ namespace GUIClient
 		{
 			Environment.Exit(0);
 		}
+
+		/// <summary>
+		/// Mostly Debugging, writes to console
+		/// </summary>
+		/// <param name="Message">message to be displayed</param>
 		public void WriteToConsole(String Message)
 		{
 			Panel MessageContainerPanel = new Panel();
@@ -156,12 +157,6 @@ namespace GUIClient
 			InfoDockingForm.Show(this);
 
 			ChatOptionFormInstance = new ChatOptionsForm(this);
-			//ChatOptionFormInstance.Show(this);
-		}
-
-		private void Output_GotFocus(Object sender, EventArgs e)
-		{
-			HideCaret(((TextBox)sender).Handle);
 		}
 
 		private void Input_Enter(Object sender, EventArgs e)
@@ -193,6 +188,31 @@ namespace GUIClient
 				e.Handled = true;
 				e.SuppressKeyPress = true;
 			}
+		}
+
+		private void ProfilePicturePreview_DoubleClick(Object sender, EventArgs e)
+		{
+			Thread GetProfilePictureDialogThread = new Thread(() => {
+				using (OpenFileDialog GetProfilePictureDialog = new OpenFileDialog())
+				{
+					GetProfilePictureDialog.InitialDirectory = Directory.GetCurrentDirectory();
+					GetProfilePictureDialog.Filter = "PNG files (*.png)|*.png|JPEG files (*.jpg)|*.jpg";
+					GetProfilePictureDialog.FilterIndex = 1;
+					GetProfilePictureDialog.RestoreDirectory = true;
+
+					if (GetProfilePictureDialog.ShowDialog() == DialogResult.OK)
+					{
+						ProfilePicturePreview.Image = Image.FromFile(GetProfilePictureDialog.FileName);
+					}
+				}
+			});
+			GetProfilePictureDialogThread.SetApartmentState(ApartmentState.STA);
+			GetProfilePictureDialogThread.Start();
+		}
+
+		private void SubmitProfilePicture_Click(Object sender, EventArgs e)
+		{
+			MainForm.SSLTCPNetworkStream.Write(new RequestPacket(ProfilePicturePreview.Image));
 		}
 
 		#region Threading

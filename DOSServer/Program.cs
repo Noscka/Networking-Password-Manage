@@ -235,6 +235,12 @@ namespace DOSServer
 							break;
 						case NetworkOperationTypes.ProfileInformationChange:
 							CurrentUser.ProfilePicture = Received.ProfilePicture;
+
+							if (System.IO.File.Exists(Directory.GetCurrentDirectory() + $"\\{ CurrentUser.name}-ProfilePicture.png"))
+							{
+								System.IO.File.Delete(Directory.GetCurrentDirectory() + $"\\{ CurrentUser.name}-ProfilePicture.png");
+							}
+
 							Received.ProfilePicture.Save($"{CurrentUser.name}-ProfilePicture.png");
 							CurrentUser.ProfilePicturePath = Directory.GetCurrentDirectory() + $"\\{ CurrentUser.name}-ProfilePicture.png";
 							Console.WriteLine(ConsoleLog($"{CurrentUser.name} Change Profile Picture"));

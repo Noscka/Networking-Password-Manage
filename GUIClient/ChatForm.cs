@@ -1,5 +1,6 @@
 ﻿using Networking.CustomNetObjects;
 using Networking.Packets;
+using Networking.Utils;
 using System;
 using System.Drawing;
 using System.IO;
@@ -202,7 +203,7 @@ namespace GUIClient
 
 					if (GetProfilePictureDialog.ShowDialog() == DialogResult.OK)
 					{
-						ProfilePicturePreview.Image = Image.FromFile(GetProfilePictureDialog.FileName);
+						ProfilePicturePreview.Image = Utils.ScaleImage(Image.FromFile(GetProfilePictureDialog.FileName), 150, 150);
 					}
 				}
 			});
@@ -222,7 +223,7 @@ namespace GUIClient
 			{
 				try
 				{
-					Byte[] ByteBuffer = new Byte[1024];
+					Byte[] ByteBuffer = new Byte[4096];
 
 					ResponsePacket Received = (ResponsePacket)MainForm._bFormatter.Deserialize(ListenStream);
 

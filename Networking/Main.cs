@@ -526,7 +526,23 @@ namespace Networking.Utils
             if (val == 0xAD) return '.';   // Soft hyphen: this symbol is zero-width even in monospace fonts
             return (char)val;   // Normal Latin-1
         }
-    }
+		public static Image ScaleImage(Image image, int maxWidth, int maxHeight)
+		{
+			var ratioX = (double)maxWidth / image.Width;
+			var ratioY = (double)maxHeight / image.Height;
+			var ratio = Math.Min(ratioX, ratioY);
+
+			var newWidth = (int)(image.Width * ratio);
+			var newHeight = (int)(image.Height * ratio);
+
+			var newImage = new Bitmap(newWidth, newHeight);
+
+			using (var graphics = Graphics.FromImage(newImage))
+				graphics.DrawImage(image, 0, 0, newWidth, newHeight);
+
+			return newImage;
+		}
+	}
 }
 
 namespace Networking.Controls
@@ -645,39 +661,7 @@ namespace Networking.Controls
 
         public void Write(MessageObject Message)
         {
-            Panel MessageContainerPanel = new Panel();
-            PictureBox ProfilePictureBox = new PictureBox();
-            Label UsernameLabel = new Label();
-            Label MessageLabel = new Label();
-
-            // Profile Picture Box
-            ProfilePictureBox.Size = new Size(50, 50);
-            System.Drawing.Drawing2D.GraphicsPath gp = new System.Drawing.Drawing2D.GraphicsPath();
-            gp.AddEllipse(0, 0, ProfilePictureBox.Width - 3, ProfilePictureBox.Height - 3);
-            Region rg = new Region(gp);
-            ProfilePictureBox.Region = rg;
-            ProfilePictureBox.Image = Image.FromFile(@"D:\Users\Adam\Downloads\MEMORIEs\DSC04182.JPG");
-            ProfilePictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-
-            //Username Label
-            UsernameLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            UsernameLabel.ForeColor = Color.FromArgb(0, 192, 0);
-            UsernameLabel.Text = Message.Username;
-            UsernameLabel.Location = new Point(50, 0);
-
-            //Message Label
-            MessageLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            MessageLabel.ForeColor = Color.FromArgb(0, 192, 0);
-            MessageLabel.Text = Message.Message;
-            MessageLabel.Location = new Point(50, 30);
-
-            //Message Container Panel
-            MessageContainerPanel.Size = new Size(780, 80);
-            MessageContainerPanel.Controls.Add(ProfilePictureBox);
-            MessageContainerPanel.Controls.Add(UsernameLabel);
-            MessageContainerPanel.Controls.Add(MessageLabel);
-
-            this.Controls.Add(MessageContainerPanel);
+            this.Controls.Add(this.GenerateMessagePanel(Message));
         }
 
         public Panel GenerateMessagePanel(MessageObject Message)

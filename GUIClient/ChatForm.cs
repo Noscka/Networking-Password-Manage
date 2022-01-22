@@ -2,6 +2,7 @@
 using Networking.Packets;
 using Networking.Utils;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -158,6 +159,13 @@ namespace GUIClient
 			InfoDockingForm.Show(this);
 
 			ChatOptionFormInstance = new ChatOptionsForm(this);
+
+			Bitmap _img = new Bitmap(150, 150);
+
+			Graphics drawing = Graphics.FromImage(_img);
+			drawing.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+			drawing.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+			drawing.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 		}
 
 		private void Input_Enter(Object sender, EventArgs e)
@@ -203,6 +211,9 @@ namespace GUIClient
 
 					if (GetProfilePictureDialog.ShowDialog() == DialogResult.OK)
 					{
+						//Panel CropPanel = new Panel();
+
+
 						ProfilePicturePreview.Image = Utils.ScaleImage(Image.FromFile(GetProfilePictureDialog.FileName), 150, 150);
 					}
 				}
@@ -233,13 +244,16 @@ namespace GUIClient
 							Panel MessageContontainer = CurrentForm.Output.GenerateMessagePanel(Received.MessageObject);
 							CurrentForm.Output.Invoke((MethodInvoker)delegate { CurrentForm.Output.Controls.Add(MessageContontainer); });
 							break;
-						//Else
+							//Else
 						default:
 							break;
 					}
 				}
 				catch (Exception ex)
 				{
+					int line = new StackTrace(ex, true).GetFrame(0).GetFileLineNumber();
+					ex.Data.Add("ErrorCodeLine", $"Error at line: {line}");
+
 					Panel MessageContainerPanel = new Panel();
 					Label MessageLabel = new Label();
 

@@ -145,8 +145,8 @@ namespace GUIClient
 			TPCConnectionThread.IsBackground = true;
 			TPCConnectionThread.Start();
 
-			//ChatForm ChatForm = new ChatForm(this);
-			//ChatForm.Show();
+			ChatForm ChatForm = new ChatForm(this);
+			ChatForm.Show();
 			//this.Hide();
 		}
 

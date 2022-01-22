@@ -89,7 +89,7 @@
 			// ProfileSettingsPanel
 			//
 			this.ProfileSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ProfileSettingsPanel.BackColor = System.Drawing.Color.White;
+			this.ProfileSettingsPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
 			this.ProfileSettingsPanel.Visible = false;
 			this.ProfileSettingsPanel.Controls.Add(this.ProfilePicturePreview);
 			this.ProfileSettingsPanel.Controls.Add(this.SubmitProfilePicture);

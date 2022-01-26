@@ -141,7 +141,9 @@ namespace GUIClient
 
 		private void LogOutButton_Click(Object sender, EventArgs e)
 		{
-			MainForm.StartFormInstance.SoftRestart(SRReasons.srReasons.LogOut);
+			Application.Restart();
+			Environment.Exit(0);
+			//MainForm.StartFormInstance.SoftRestart(SRReasons.srReasons.LogOut);
 		}
 
 		private void ProfileSettingsButton_Click(Object sender, EventArgs e)
